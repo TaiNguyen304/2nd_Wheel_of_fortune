@@ -661,7 +661,8 @@
                 document.getElementById('specialValuePopup').style.display = 'none';
             }
 
-            const startTimestamp = startTime || Date.now();
+            // SỬ DỤNG THỜI GIAN THỰC TẠI CHỖ để loại bỏ hoàn toàn lệch múi giờ hay độ lệch đồng hồ giữa máy tính và điện thoại!
+            const startTimestamp = Date.now();
             const durationMs = finalDuration * 1000;
 
             function easeOutQuint(t) {
@@ -730,6 +731,7 @@
             return typeof result === 'number' ? result.toLocaleString() + " điểm" : result;
         }
 
+        // LẮNG NGHE TÍN HIỆU REALTIME
         function executeShowValue() {
             if (!isSpecialMode) return;
             currentRotation = getVisualRotation();
@@ -771,7 +773,8 @@
 
             specialValuePopup.style.display = 'none';
 
-            const startTimestamp = startTime || Date.now();
+            // Sử dụng thời gian thực tế bắt đầu xoay tại chỗ để tránh lệch đồng hồ
+            const startTimestamp = Date.now();
             const durationMs = 4000;
 
             function easeOutQuint(t) {
@@ -838,7 +841,7 @@
             channel.on('broadcast', { event: 'toggle_wheel' }, function (payload) {
                 executeToggleWheel(payload.payload.type, payload.payload.isShow);
             }).on('broadcast', { event: 'spin_wheel' }, function (payload) {
-                executeSpin(payload.payload.duration, payload.payload.randomOffset, payload.payload.startTime, payload.payload.startRot, payload.payload.minRotations);
+                executeSpin(payload.payload.duration, payload.payload.randomOffset, undefined, payload.payload.startRot, payload.payload.minRotations);
             }).on('broadcast', { event: 'pointer_light' }, function (payload) {
                 executePointerLight(payload.payload.pointerName, payload.payload.state);
             }).on('broadcast', { event: 'zoom_pointer' }, function (payload) {
@@ -856,7 +859,8 @@
             }).on('broadcast', { event: 'hide_value' }, function () {
                 executeHideValue();
             }).on('broadcast', { event: 'find_highest' }, function (payload) {
-                executeFindHighest(payload.payload.startTime, payload.payload.targetRot, payload.payload.targetIndex);
+                // SỬA LẠI: truyền đúng tham số
+                executeFindHighest(undefined, payload.payload.targetRot, payload.payload.targetIndex);
             }).on('broadcast', { event: 'sync_scores' }, function (payload) {
                 executeUpdateScores(payload.payload);
             }).on('broadcast', { event: 'toggle_player_card' }, function (payload) {

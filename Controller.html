@@ -164,8 +164,11 @@
         <div class="flex-row">
             <button onclick="createRoom()" style="background: green; color: white;">Tạo phòng mới</button>
         </div>
-        <div id="roomCreateResult" style="margin-top: 15px; display: none; padding: 15px; background: #f9f9f9; border-radius: 5px; border: 1px solid #ddd;"></div>
-        <div id="currentRoomInfo" style="margin-top: 15px; padding: 12px; background: #e8f4fd; border-radius: 5px; display: none;"></div>
+        <div id="roomCreateResult"
+            style="margin-top: 15px; display: none; padding: 15px; background: #f9f9f9; border-radius: 5px; border: 1px solid #ddd;">
+        </div>
+        <div id="currentRoomInfo"
+            style="margin-top: 15px; padding: 12px; background: #e8f4fd; border-radius: 5px; display: none;"></div>
         <div id="roomError" style="margin-top: 10px; color: red;"></div>
     </div>
 
@@ -505,14 +508,14 @@
                 .select('wheel_state')
                 .eq('room_id', roomId)
                 .single();
-            
+
             let currentState = {};
             if (data && data.wheel_state) {
                 currentState = data.wheel_state;
             }
-            
+
             const newState = Object.assign({}, currentState, updates);
-            
+
             await supabase
                 .from('game_room_state')
                 .update({ wheel_state: newState })
@@ -605,10 +608,13 @@
         }
 
         function initChannel() {
-            if (!roomId || channel) return;
+            if (!roomId) return;
+            if (channel) supabase.removeChannel(channel);
+
             channel = supabase.channel('wheel_room_' + roomId, {
-                config: { broadcast: { self: true } }
+                config: { broadcast: { ack: true, self: true } }
             });
+
             channel.on('broadcast', { event: 'spin_wheel' }, function (payload) {
                 updateControllerRotationFromSpin(payload.payload);
             }).on('broadcast', { event: 'reset_rotation' }, function () {
@@ -620,6 +626,7 @@
                     updateWheelStateFields({ currentRotation: currentRotation });
                 }
             });
+
             channel.subscribe();
         }
 

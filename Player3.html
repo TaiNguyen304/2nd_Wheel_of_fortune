@@ -508,7 +508,7 @@
             const minRot = (minRotations || MIN_SPIN_ROTATIONS) * 360;
             let finalDuration = parseFloat(duration);
             if (isNaN(finalDuration) || finalDuration <= 0) finalDuration = 5;
-            const durationRot = finalDuration * 360;
+            const durationRot = finalDuration * 3601;
             const totalExtra = Math.max(minRot, durationRot) + (randomOffset || 0);
             const start = parseFloat(startRot);
             return { startRot: start, targetRot: start + totalExtra, finalDuration: finalDuration };

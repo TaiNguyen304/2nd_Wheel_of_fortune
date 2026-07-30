@@ -413,6 +413,30 @@
             window.location.href = 'index.html';
         }
 
+        // BỔ SUNG: Khai báo đối tượng Audio toàn cục
+        let currentGlobalAudio = null;
+
+        function playSoundEffect(soundFile) {
+            if (soundFile === 'STOP') {
+                if (currentGlobalAudio) {
+                    currentGlobalAudio.pause();
+                    currentGlobalAudio.currentTime = 0;
+                }
+                return;
+            }
+
+            if (currentGlobalAudio) {
+                currentGlobalAudio.pause();
+                currentGlobalAudio.currentTime = 0;
+            }
+
+            // Đảm bảo file âm thanh nằm chung thư mục với file HTML
+            currentGlobalAudio = new Audio('./' + soundFile);
+            currentGlobalAudio.play().catch(function (error) {
+                console.warn("Chưa tương tác với trang nên chưa thể autoplay sound:", error);
+            });
+        }
+
         let channel = null;
 
         let currentRotation = 0;
@@ -890,6 +914,10 @@
                             payload.payload.targetRot,
                             payload.payload.targetIndex
                         );
+                    }).on('broadcast', { event: 'play_sound' }, function (payload) {
+                        if (payload && payload.payload && payload.payload.sound) {
+                            playSoundEffect(payload.payload.sound);
+                        }
                     })
                     .on('broadcast', { event: 'reset_rotation' }, function () {
                         if (animationFrameId) cancelAnimationFrame(animationFrameId);

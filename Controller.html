@@ -14,52 +14,89 @@
         }
 
         body {
-            padding: 20px;
+            margin: 0;
+            padding: 10px;
             background-color: #f0f2f5;
+            height: 100vh;
+            overflow-x: auto;
+            overflow-y: hidden;
+        }
+
+        .controller-4col-container {
+            display: grid;
+            grid-template-columns: repeat(4, minmax(320px, 1fr));
+            gap: 12px;
+            height: calc(100vh - 20px);
+            min-width: 1300px;
+        }
+
+        .controller-col {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            height: 100%;
+            overflow-y: auto;
+            overflow-x: hidden;
+            padding-right: 4px;
+        }
+
+        .controller-col::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        .controller-col::-webkit-scrollbar-thumb {
+            background: #bbb;
+            border-radius: 3px;
         }
 
         .section {
             background: white;
-            padding: 15px;
-            margin-bottom: 20px;
+            padding: 12px;
             border-radius: 8px;
             box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
         }
 
+        .section h2 {
+            margin-top: 0;
+            margin-bottom: 10px;
+            font-size: 16px;
+        }
+
         .grid-pointer {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-            gap: 15px;
+            grid-template-columns: 1fr;
+            gap: 8px;
         }
 
         .grid-4 {
             display: grid;
-            grid-template-columns: repeat(4, 1fr);
-            gap: 10px;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 8px;
         }
 
         .grid-6x4 {
             display: grid;
-            grid-template-columns: repeat(6, 1fr);
-            gap: 10px;
-            margin-top: 15px;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 6px;
+            margin-top: 10px;
         }
 
         .flex-row {
             display: flex;
-            gap: 10px;
+            gap: 8px;
             align-items: center;
             flex-wrap: wrap;
         }
 
         button {
-            padding: 10px 15px;
+            padding: 8px 12px;
             border: none;
             border-radius: 5px;
             cursor: pointer;
             background: purple;
             color: white;
             transition: 0.2s;
+            font-size: 13px;
         }
 
         button:hover {
@@ -78,42 +115,46 @@
 
         input[type="number"],
         input[type="text"] {
-            padding: 10px;
+            padding: 8px;
             border: 1px solid #ccc;
             border-radius: 5px;
-            width: 150px;
+            width: 120px;
+            font-size: 13px;
         }
 
         .item-card {
             border: 1px solid #ddd;
-            padding: 10px;
+            padding: 8px;
             border-radius: 5px;
             text-align: center;
+            font-size: 12px;
         }
 
         .pointer-control {
             display: flex;
             align-items: center;
-            gap: 10px;
-            padding: 10px;
+            gap: 6px;
+            padding: 8px;
             border: 1px solid #eee;
             border-radius: 5px;
+            font-size: 12px;
         }
 
         .wedge-cell {
-            padding: 12px;
+            padding: 8px 4px;
             text-align: center;
-            border-radius: 5px;
+            border-radius: 4px;
             border: 1px solid #ccc;
-            font-size: 14px;
+            font-size: 11px;
+            line-height: 1.2;
         }
 
         /* THIẾT KẾ ĐIỀU KHIỂN NGƯỜI CHƠI */
         .player-control-block {
-            border: 3px solid #ccc;
-            padding: 15px;
-            margin-top: 15px;
-            border-radius: 8px;
+            border: 2px solid #ccc;
+            padding: 10px;
+            margin-top: 8px;
+            border-radius: 6px;
         }
 
         .block-red {
@@ -131,21 +172,21 @@
 
         .score-display-row {
             display: flex;
-            gap: 15px;
-            margin-bottom: 15px;
+            gap: 8px;
+            margin-bottom: 10px;
         }
 
         .score-info-box {
-            padding: 10px 20px;
-            font-size: 18px;
+            padding: 8px 12px;
+            font-size: 14px;
             border-radius: 4px;
             color: white;
-            min-width: 160px;
+            flex: 1;
             text-align: center;
         }
 
         .btn-card-toggle {
-            padding: 6px 10px;
+            padding: 5px 8px;
             font-size: 11px;
             background: #333;
             border: 1px solid #fff;
@@ -155,285 +196,286 @@
             background: #008000 !important;
             color: #fff !important;
         }
+
+        .soundboard-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(105px, 1fr));
+            gap: 6px;
+        }
+
+        .sound-btn {
+            padding: 8px 6px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            background: purple;
+            color: white;
+            font-weight: bold;
+            font-size: 12px;
+            transition: 0.2s;
+        }
+
+        .sound-btn:hover {
+            background: orange !important;
+            color: #fff !important;
+        }
+
+        .sound-btn.stop-btn {
+            background: red !important;
+        }
     </style>
 </head>
 
 <body>
 
-    <div class="section">
-        <h2>Tạo mã phòng và mật khẩu</h2>
-        <div class="flex-row">
-            <button onclick="createRoom()" style="background: green; color: white;">Tạo phòng mới</button>
-        </div>
-        <div id="roomCreateResult"
-            style="margin-top: 15px; display: none; padding: 15px; background: #f9f9f9; border-radius: 5px; border: 1px solid #ddd;">
-        </div>
-        <div id="currentRoomInfo"
-            style="margin-top: 15px; padding: 12px; background: #e8f4fd; border-radius: 5px; display: none;"></div>
-        <div id="roomError" style="margin-top: 10px; color: red;"></div>
-    </div>
+    <div class="controller-4col-container">
+        <!-- CỘT 1: PHÒNG & SOUNDBOARD -->
+        <div class="controller-col">
+            <div class="section">
+                <h2>Tạo mã phòng và mật khẩu</h2>
+                <div class="flex-row">
+                    <button onclick="createRoom()" style="background: green; color: white;">Tạo phòng mới</button>
+                </div>
+                <div id="roomCreateResult"
+                    style="margin-top: 10px; display: none; padding: 10px; background: #f9f9f9; border-radius: 5px; border: 1px solid #ddd;">
+                </div>
+                <div id="currentRoomInfo"
+                    style="margin-top: 10px; padding: 10px; background: #e8f4fd; border-radius: 5px; display: none; font-size: 13px; line-height: 1.5;"></div>
+                <div id="roomError" style="margin-top: 8px; color: red; font-size: 13px;"></div>
+            </div>
 
-    <!-- MỤC QUẢN LÝ SOUNDBOARD (BỔ SUNG) -->
-    <div class="section">
-        <h2>Quản lý Soundboard</h2>
-        <style>
-            .soundboard-grid {
-                display: grid;
-                grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
-                gap: 10px;
-            }
-            .sound-btn {
-                padding: 10px;
-                border: none;
-                border-radius: 5px;
-                cursor: pointer;
-                background: purple;
-                color: white;
-                font-weight: bold;
-                transition: 0.2s;
-            }
-            .sound-btn:hover {
-                background: orange !important;
-                color: #fff !important;
-            }
-            .sound-btn.stop-btn {
-                background: red !important;
-            }
-        </style>
-        <div class="soundboard-grid">
-            <button class="sound-btn" onclick="triggerSound('intro.mp3')">Intro</button>
-            <button class="sound-btn" onclick="triggerSound('open.mp3')">Open</button>
-            <button class="sound-btn" onclick="triggerSound('toss_up.mp3')">Toss Up</button>
-            <button class="sound-btn" onclick="triggerSound('toss_up_solve.mp3')">Toss up solve</button>
-            <button class="sound-btn" onclick="triggerSound('solve.mp3')">Solve</button>
-            <button class="sound-btn" onclick="triggerSound('mystery.mp3')">Mystery</button>
-            <button class="sound-btn" onclick="triggerSound('express_1.mp3')">Express 1</button>
-            <button class="sound-btn" onclick="triggerSound('express_2.mp3')">Express 2</button>
-            <button class="sound-btn" onclick="triggerSound('final_spin_bell.mp3')">Final Spin Bell</button>
-            <button class="sound-btn" onclick="triggerSound('final_spin.mp3')">Final Spin</button>
-            <button class="sound-btn" onclick="triggerSound('speed_up.mp3')">Speed up</button>
-            <button class="sound-btn" onclick="triggerSound('bonus_spin.mp3')">Bonus Spin</button>
-            <button class="sound-btn" onclick="triggerSound('nghia.mp3')">NGHIA</button>
-            <button class="sound-btn" onclick="triggerSound('3l.mp3')">3L</button>
-            <button class="sound-btn" onclick="triggerSound('10s.mp3')">10s</button>
-            <button class="sound-btn" onclick="triggerSound('bonus_win.mp3')">Bonus Win</button>
-            <button class="sound-btn" onclick="triggerSound('bonus_lose.mp3')">Bonus Lose</button>
-            <button class="sound-btn" onclick="triggerSound('bankrupt.mp3')">Bankrupt</button>
-            <button class="sound-btn" onclick="triggerSound('Closing.mp3')">Closing</button>
-
-            <button class="sound-btn stop-btn" onclick="triggerSound('STOP')">Dừng âm thanh</button>
-        </div>
-    </div>
-
-    <div class="section">
-        <h2>Điều khiển Nón</h2>
-        <div class="flex-row">
-            <button onclick="toggleWheel('normal', true)">Hiện Nón</button>
-            <button class="btn-off" onclick="toggleWheel('normal', false)">Ẩn Nón</button>
-            <button onclick="toggleWheel('special', true)">Hiện Nón Đặc Biệt</button>
-            <button class="btn-off" onclick="toggleWheel('special', false)">Ẩn Nón Đặc Biệt</button>
-            <button onclick="toggleWheel('sub_wheel', true)" style="background-color: #800080; color: white;">Hiện Nón
-                Phụ</button>
-            <button class="btn-off" onclick="toggleWheel('sub_wheel', false)">Ẩn Nón Phụ</button>
-            <button onclick="resetWheelRotation()" style="background-color: #800080; color: white;">Reset Góc
-                Quay</button>
-        </div>
-        <div class="flex-row" style="margin-top: 15px;">
-            <label>Thời gian quay (5-20s):</label>
-            <input type="number" id="spinTime" min="5" max="20" placeholder="VD: 10">
-            <button onclick="spinWheel()">Quay Nón</button>
-        </div>
-    </div>
-
-    <div class="section">
-        <h2>Điều khiển Nón Phụ</h2>
-        <div class="flex-row">
-            <button onclick="shuffleSubWheel()" style="background: blue; color: white;">Xáo giá trị nón phụ</button>
-            <button onclick="showValue()" style="background: green; color: white;">Hiện giá trị ô quay vào</button>
-            <button onclick="findHighestWedge()" style="background: red; color: white;">Tìm ô cao nhất</button>
-            <button onclick="hideValue()" style="background: yellow; color: #000;">Ẩn giá trị</button>
+            <!-- MỤC QUẢN LÝ SOUNDBOARD -->
+            <div class="section">
+                <h2>Quản lý Soundboard</h2>
+                <div class="soundboard-grid">
+                    <button class="sound-btn" onclick="triggerSound('intro.mp3')">Intro</button>
+                    <button class="sound-btn" onclick="triggerSound('open.mp3')">Open</button>
+                    <button class="sound-btn" onclick="triggerSound('toss_up.mp3')">Toss Up</button>
+                    <button class="sound-btn" onclick="triggerSound('toss_up_solve.mp3')">Toss up solve</button>
+                    <button class="sound-btn" onclick="triggerSound('solve.mp3')">Solve</button>
+                    <button class="sound-btn" onclick="triggerSound('mystery.mp3')">Mystery</button>
+                    <button class="sound-btn" onclick="triggerSound('express_1.mp3')">Express 1</button>
+                    <button class="sound-btn" onclick="triggerSound('express_2.mp3')">Express 2</button>
+                    <button class="sound-btn" onclick="triggerSound('final_spin_bell.mp3')">Final Spin Bell</button>
+                    <button class="sound-btn" onclick="triggerSound('final_spin.mp3')">Final Spin</button>
+                    <button class="sound-btn" onclick="triggerSound('speed_up.mp3')">Speed up</button>
+                    <button class="sound-btn" onclick="triggerSound('bonus_spin.mp3')">Bonus Spin</button>
+                    <button class="sound-btn" onclick="triggerSound('nghia.mp3')">NGHIA</button>
+                    <button class="sound-btn" onclick="triggerSound('3l.mp3')">3L</button>
+                    <button class="sound-btn" onclick="triggerSound('10s.mp3')">10s</button>
+                    <button class="sound-btn" onclick="triggerSound('bonus_win.mp3')">Bonus Win</button>
+                    <button class="sound-btn" onclick="triggerSound('bonus_lose.mp3')">Bonus Lose</button>
+                    <button class="sound-btn" onclick="triggerSound('bankrupt.mp3')">Bankrupt</button>
+                    <button class="sound-btn" onclick="triggerSound('Closing.mp3')">Closing</button>
+                    <button class="sound-btn stop-btn" onclick="triggerSound('STOP')">Dừng âm thanh</button>
+                </div>
+            </div>
         </div>
 
-        <h3 style="margin-top: 20px; margin-bottom: 5px;">Sơ đồ 24 ô Nón Phụ</h3>
-        <div class="grid-6x4" id="subGridContainer"></div>
-    </div>
+        <!-- CỘT 2: ĐIỀU KHIỂN NÓN & ĐÈN KIM & LƯỢT / NÚT QUAY -->
+        <div class="controller-col">
+            <div class="section">
+                <h2>Điều khiển Nón</h2>
+                <div class="flex-row">
+                    <button onclick="toggleWheel('normal', true)">Hiện Nón</button>
+                    <button class="btn-off" onclick="toggleWheel('normal', false)">Ẩn Nón</button>
+                    <button onclick="toggleWheel('special', true)">Hiện Nón Đặc Biệt</button>
+                    <button class="btn-off" onclick="toggleWheel('special', false)">Ẩn Nón Đặc Biệt</button>
+                    <button onclick="toggleWheel('sub_wheel', true)" style="background-color: #800080; color: white;">Hiện Nón Phụ</button>
+                    <button class="btn-off" onclick="toggleWheel('sub_wheel', false)">Ẩn Nón Phụ</button>
+                    <button onclick="resetWheelRotation()" style="background-color: #800080; color: white;">Reset Góc Quay</button>
+                </div>
+                <div class="flex-row" style="margin-top: 10px;">
+                    <label style="font-size: 13px;">Thời gian quay (5-20s):</label>
+                    <input type="number" id="spinTime" min="5" max="20" placeholder="VD: 10">
+                    <button onclick="spinWheel()">Quay Nón</button>
+                </div>
+            </div>
 
-    <div class="section">
-        <h2>Điều khiển Nón Đặc Biệt</h2>
-        <div class="flex-row">
-            <label><input type="radio" name="specialPrize" value="50000" checked> 50.000 điểm</label>
-            <label><input type="radio" name="specialPrize" value="100000"> 100.000 điểm</label>
-            <button onclick="shuffleSpecialWheel()" style="background: blue; color: white;">Xáo giá trị</button>
-            <button onclick="showValue()" style="background: green; color: white;">Hiện giá trị ô quay vào</button>
-            <button onclick="findHighestWedge()" style="background: red; color: white;">Tìm ô cao nhất</button>
-            <button onclick="hideValue()" style="background: yellow; color: #000;">Ẩn giá trị</button>
+            <div class="section">
+                <h2>Điều khiển Đèn Kim</h2>
+                <div class="grid-pointer">
+                    <div class="pointer-control" style="background-color: red; color: #fff;">
+                        <span>Kim Đỏ:</span>
+                        <button onclick="setPointer('red', 'on')" style="background: green;">Mở</button>
+                        <button class="btn-off" onclick="setPointer('red', 'off')">Đóng</button>
+                    </div>
+                    <div class="pointer-control" style="background-color: yellow; color: #000;">
+                        <span>Kim Vàng:</span>
+                        <button onclick="setPointer('yellow', 'on')" style="background: green;">Mở</button>
+                        <button class="btn-off" onclick="setPointer('yellow', 'off')">Đóng</button>
+                    </div>
+                    <div class="pointer-control" style="background-color: blue; color: #fff;">
+                        <span>Kim Xanh:</span>
+                        <button onclick="setPointer('blue', 'on')" style="background: green;">Mở</button>
+                        <button class="btn-off" onclick="setPointer('blue', 'off')">Đóng</button>
+                    </div>
+                    <div class="pointer-control" style="background-color: purple; color: #fff;">
+                        <span>Zoom Kim:</span>
+                        <button onclick="easeTiltSubWheel('red')" style="background: red; color: white;">Ease in Đỏ</button>
+                        <button onclick="zoomPointer('in')" style="background: yellow; color: black;">Ease in Vàng</button>
+                        <button onclick="easeTiltSubWheel('blue')" style="background: blue; color: white;">Ease in Xanh</button>
+                        <button onclick="zoomPointer('out')" style="background: #ff00ff; color: white;">Ease out</button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="section">
+                <h2>Điều khiển Lượt & Nút Quay Người Chơi</h2>
+                <div class="grid-pointer" style="margin-bottom: 10px;">
+                    <div class="pointer-control" style="background-color: red; color: #fff;">
+                        <span>Lượt Đỏ:</span>
+                        <button onclick="setTurn('red', true)" style="background: green;">Set</button>
+                        <button class="btn-off" onclick="setTurn('red', false)">Unset</button>
+                    </div>
+                    <div class="pointer-control" style="background-color: yellow; color: #000;">
+                        <span>Lượt Vàng:</span>
+                        <button onclick="setTurn('yellow', true)" style="background: green;">Set</button>
+                        <button class="btn-off" onclick="setTurn('yellow', false)">Unset</button>
+                    </div>
+                    <div class="pointer-control" style="background-color: blue; color: #fff;">
+                        <span>Lượt Xanh:</span>
+                        <button onclick="setTurn('blue', true)" style="background: green;">Set</button>
+                        <button class="btn-off" onclick="setTurn('blue', false)">Unset</button>
+                    </div>
+                    <div class="pointer-control" style="background-color: #333; color: #fff;">
+                        <span>Tất cả:</span>
+                        <button onclick="setTurn('all', true)" style="background: green;">Set All</button>
+                        <button class="btn-off" onclick="setTurn('all', false)">Unset All</button>
+                    </div>
+                </div>
+                <div class="grid-pointer">
+                    <div class="pointer-control" style="background-color: red; color: #fff;">
+                        <span>Nút Đỏ:</span>
+                        <button onclick="toggleSpinBtn('red', true)" style="background: green;">Mở</button>
+                        <button class="btn-off" onclick="toggleSpinBtn('red', false)">Khóa</button>
+                    </div>
+                    <div class="pointer-control" style="background-color: yellow; color: #000;">
+                        <span>Nút Vàng:</span>
+                        <button onclick="toggleSpinBtn('yellow', true)" style="background: green;">Mở</button>
+                        <button class="btn-off" onclick="toggleSpinBtn('yellow', false)">Khóa</button>
+                    </div>
+                    <div class="pointer-control" style="background-color: blue; color: #fff;">
+                        <span>Nút Xanh:</span>
+                        <button onclick="toggleSpinBtn('blue', true)" style="background: green;">Mở</button>
+                        <button class="btn-off" onclick="toggleSpinBtn('blue', false)">Khóa</button>
+                    </div>
+                    <div class="pointer-control" style="background-color: #333; color: #fff;">
+                        <span>Tất cả:</span>
+                        <button onclick="toggleSpinBtn('all', true)" style="background: green;">Mở All</button>
+                        <button class="btn-off" onclick="toggleSpinBtn('all', false)">Khóa All</button>
+                    </div>
+                </div>
+            </div>
         </div>
 
-        <h3 style="margin-top: 20px; margin-bottom: 5px;">Sơ đồ 24 ô Nón Đặc Biệt</h3>
-        <div class="grid-6x4" id="specialGridContainer"></div>
-    </div>
+        <!-- CỘT 3: SƠ ĐỒ NÓN PHỤ & NÓN ĐẶC BIỆT & HIỂN THỊ THẺ/Ô -->
+        <div class="controller-col">
+            <div class="section">
+                <h2>Điều khiển Nón Phụ</h2>
+                <div class="flex-row">
+                    <button onclick="shuffleSubWheel()" style="background: blue; color: white;">Xáo giá trị nón phụ</button>
+                    <button onclick="showValue()" style="background: green; color: white;">Hiện giá trị</button>
+                    <button onclick="findHighestWedge()" style="background: red; color: white;">Tìm ô cao nhất</button>
+                    <button onclick="hideValue()" style="background: yellow; color: #000;">Ẩn giá trị</button>
+                </div>
+                <h3 style="margin-top: 10px; margin-bottom: 5px; font-size: 13px;">Sơ đồ 24 ô Nón Phụ</h3>
+                <div class="grid-6x4" id="subGridContainer"></div>
+            </div>
 
-    <div class="section">
-        <h2>Điều khiển Đèn Kim</h2>
-        <div class="grid-pointer">
-            <div class="pointer-control" style="background-color: red; color: #fff;">
-                <span>Kim Đỏ:</span>
-                <button onclick="setPointer('red', 'on')" style="background: green;">Mở</button>
-                <button class="btn-off" onclick="setPointer('red', 'off')">Đóng</button>
+            <div class="section">
+                <h2>Điều khiển Nón Đặc Biệt</h2>
+                <div class="flex-row">
+                    <label style="font-size: 12px;"><input type="radio" name="specialPrize" value="50000" checked> 50.000đ</label>
+                    <label style="font-size: 12px;"><input type="radio" name="specialPrize" value="100000"> 100.000đ</label>
+                    <button onclick="shuffleSpecialWheel()" style="background: blue; color: white;">Xáo giá trị</button>
+                    <button onclick="showValue()" style="background: green; color: white;">Hiện giá trị</button>
+                    <button onclick="findHighestWedge()" style="background: red; color: white;">Tìm ô cao nhất</button>
+                    <button onclick="hideValue()" style="background: yellow; color: #000;">Ẩn giá trị</button>
+                </div>
+                <h3 style="margin-top: 10px; margin-bottom: 5px; font-size: 13px;">Sơ đồ 24 ô Nón Đặc Biệt</h3>
+                <div class="grid-6x4" id="specialGridContainer"></div>
             </div>
-            <div class="pointer-control" style="background-color: yellow; color: #000;">
-                <span>Kim Vàng:</span>
-                <button onclick="setPointer('yellow', 'on')" style="background: green;">Mở</button>
-                <button class="btn-off" onclick="setPointer('yellow', 'off')">Đóng</button>
-            </div>
-            <div class="pointer-control" style="background-color: blue; color: #fff;">
-                <span>Kim Xanh:</span>
-                <button onclick="setPointer('blue', 'on')" style="background: green;">Mở</button>
-                <button class="btn-off" onclick="setPointer('blue', 'off')">Đóng</button>
-            </div>
-            <div class="pointer-control" style="background-color: purple; color: #fff;">
-                <span>Zoom Kim:</span>
-                <button onclick="easeTiltSubWheel('red')" style="background: red; color: white;">Ease in Đỏ</button>
-                <button onclick="zoomPointer('in')" style="background: yellow; color: black;">Ease in Vàng</button>
-                <button onclick="easeTiltSubWheel('blue')" style="background: blue; color: white;">Ease in Xanh</button>
-                <button onclick="zoomPointer('out')" style="background: #ff00ff; color: white;">Ease out</button>
+
+            <div class="section">
+                <h2>Hiển thị Thẻ & Ô</h2>
+                <div class="grid-4" id="itemsContainer"></div>
             </div>
         </div>
-    </div>
 
-    <div class="section">
-        <h2>Điều khiển Lượt & Nút Quay Người Chơi</h2>
-        <div class="grid-pointer" style="margin-bottom: 15px;">
-            <div class="pointer-control" style="background-color: red; color: #fff;">
-                <span>Lượt Đỏ:</span>
-                <button onclick="setTurn('red', true)" style="background: green;">Set</button>
-                <button class="btn-off" onclick="setTurn('red', false)">Unset</button>
-            </div>
-            <div class="pointer-control" style="background-color: yellow; color: #000;">
-                <span>Lượt Vàng:</span>
-                <button onclick="setTurn('yellow', true)" style="background: green;">Set</button>
-                <button class="btn-off" onclick="setTurn('yellow', false)">Unset</button>
-            </div>
-            <div class="pointer-control" style="background-color: blue; color: #fff;">
-                <span>Lượt Xanh:</span>
-                <button onclick="setTurn('blue', true)" style="background: green;">Set</button>
-                <button class="btn-off" onclick="setTurn('blue', false)">Unset</button>
-            </div>
-            <div class="pointer-control" style="background-color: #333; color: #fff;">
-                <span>Tất cả:</span>
-                <button onclick="setTurn('all', true)" style="background: green;">Set All</button>
-                <button class="btn-off" onclick="setTurn('all', false)">Unset All</button>
-            </div>
-        </div>
-        <div class="grid-pointer">
-            <div class="pointer-control" style="background-color: red; color: #fff;">
-                <span>Nút Đỏ:</span>
-                <button onclick="toggleSpinBtn('red', true)" style="background: green;">Mở</button>
-                <button class="btn-off" onclick="toggleSpinBtn('red', false)">Khóa</button>
-            </div>
-            <div class="pointer-control" style="background-color: yellow; color: #000;">
-                <span>Nút Vàng:</span>
-                <button onclick="toggleSpinBtn('yellow', true)" style="background: green;">Mở</button>
-                <button class="btn-off" onclick="toggleSpinBtn('yellow', false)">Khóa</button>
-            </div>
-            <div class="pointer-control" style="background-color: blue; color: #fff;">
-                <span>Nút Xanh:</span>
-                <button onclick="toggleSpinBtn('blue', true)" style="background: green;">Mở</button>
-                <button class="btn-off" onclick="toggleSpinBtn('blue', false)">Khóa</button>
-            </div>
-            <div class="pointer-control" style="background-color: #333; color: #fff;">
-                <span>Tất cả:</span>
-                <button onclick="toggleSpinBtn('all', true)" style="background: green;">Mở All</button>
-                <button class="btn-off" onclick="toggleSpinBtn('all', false)">Khóa All</button>
-            </div>
-        </div>
-    </div>
+        <!-- CỘT 4: BẢNG ĐIỀU KHIỂN NGƯỜI CHƠI (ĐỎ, VÀNG, XANH) -->
+        <div class="controller-col">
+            <div class="section">
+                <h2>Bảng Điều Khiển Người Chơi</h2>
 
-    <div class="section">
-        <h2>Hiển thị Thẻ & Ô</h2>
-        <div class="grid-4" id="itemsContainer"></div>
-    </div>
+                <div class="player-control-block block-red">
+                    <h3 style="color: red; margin-top: 0; font-size: 14px;">NC ĐỎ</h3>
+                    <div class="score-display-row">
+                        <div class="score-info-box" id="ctrl-red-round-box" style="background: red;">Điểm Vòng: 0</div>
+                        <div class="score-info-box" id="ctrl-red-total-box" style="background: red;">Điểm Tổng: 0</div>
+                    </div>
+                    <div class="flex-row" style="margin-bottom: 8px;">
+                        <input type="text" id="score-input-red" placeholder="Nhập số điểm" oninput="formatNumberInput(this)">
+                        <button onclick="modifyScore('red', 'total', 'add')" style="background: blue; color: white;">Tổng +</button>
+                        <button onclick="modifyScore('red', 'round', 'add')" style="background: yellow; color: black;">Vòng +</button>
+                        <button onclick="modifyScore('red', 'round', 'sub')" style="background: red; color: white;">Vòng -</button>
+                        <button onclick="multiplyRoundScore('red', 1.5)" style="background: #800080; color: white; font-weight: bold;">x1.5</button>
+                        <button onclick="multiplyRoundScore('red', 2)" style="background: #800080; color: white; font-weight: bold;">x2</button>
+                        <button onclick="divideRoundScore('red', 2)" style="background: #800080; color: white; font-weight: bold;">:2</button>
+                        <button onclick="resetPlayerScore('red', 'round')" style="background: #800080; color: white; font-weight: bold;">Reset vòng</button>
+                        <button onclick="resetPlayerScore('red', 'total')" style="background: #800080; color: white; font-weight: bold;">Reset tổng</button>
+                    </div>
+                    <div class="flex-row" id="cards-row-red"></div>
+                </div>
 
-    <div class="section">
-        <h2>Bảng Điều Khiển Người Chơi</h2>
+                <div class="player-control-block block-yellow" style="background: black;">
+                    <h3 style="color: yellow; margin-top: 0; font-size: 14px;">NC VÀNG</h3>
+                    <div class="score-display-row">
+                        <div class="score-info-box" id="ctrl-yellow-round-box" style="background: yellow; color: #000;">Điểm Vòng: 0</div>
+                        <div class="score-info-box" id="ctrl-yellow-total-box" style="background: yellow; color: #000;">Điểm Tổng: 0</div>
+                    </div>
+                    <div class="flex-row" style="margin-bottom: 8px;">
+                        <input type="text" id="score-input-yellow" placeholder="Nhập số điểm" oninput="formatNumberInput(this)">
+                        <button onclick="modifyScore('yellow', 'total', 'add')" style="background: blue; color: white;">Tổng +</button>
+                        <button onclick="modifyScore('yellow', 'round', 'add')" style="background: yellow; color: black;">Vòng +</button>
+                        <button onclick="modifyScore('yellow', 'round', 'sub')" style="background: red; color: white;">Vòng -</button>
+                        <button onclick="multiplyRoundScore('yellow', 1.5)" style="background: #800080; color: white; font-weight: bold;">x1.5</button>
+                        <button onclick="multiplyRoundScore('yellow', 2)" style="background: #800080; color: white; font-weight: bold;">x2</button>
+                        <button onclick="divideRoundScore('yellow', 2)" style="background: #800080; color: white; font-weight: bold;">:2</button>
+                        <button onclick="resetPlayerScore('yellow', 'round')" style="background: #800080; color: white; font-weight: bold;">Reset vòng</button>
+                        <button onclick="resetPlayerScore('yellow', 'total')" style="background: #800080; color: white; font-weight: bold;">Reset tổng</button>
+                    </div>
+                    <div class="flex-row" id="cards-row-yellow"></div>
+                </div>
 
-        <div class="player-control-block block-red">
-            <h3 style="color: red; margin-top: 0;">NC ĐỎ</h3>
-            <div class="score-display-row">
-                <div class="score-info-box" id="ctrl-red-round-box" style="background: red;">Điểm Vòng: 0</div>
-                <div class="score-info-box" id="ctrl-red-total-box" style="background: red;">Điểm Tổng: 0</div>
-            </div>
-            <div class="flex-row" style="margin-bottom: 12px;">
-                <input type="text" id="score-input-red" placeholder="Nhập số điểm" oninput="formatNumberInput(this)">
-                <button onclick="modifyScore('red', 'total', 'add')" style="background: blue; color: white;">Tổng
-                    +</button>
-                <button onclick="modifyScore('red', 'round', 'add')" style="background: yellow; color: black;">Vòng
-                    +</button>
-                <button onclick="modifyScore('red', 'round', 'sub')" style="background: red; color: white;">Vòng
-                    -</button>
-                <button onclick="multiplyRoundScore('red', 1.5)" style="background: #800080; color: white; font-weight: bold;">x1.5</button>
-                <button onclick="multiplyRoundScore('red', 2)" style="background: #800080; color: white; font-weight: bold;">x2</button>
-                <button onclick="divideRoundScore('red', 2)" style="background: #800080; color: white; font-weight: bold;">:2</button>
-                <button onclick="resetPlayerScore('red', 'round')" style="background: #800080; color: white; font-weight: bold;">Reset vòng</button>
-                <button onclick="resetPlayerScore('red', 'total')" style="background: #800080; color: white; font-weight: bold;">Reset tổng</button>
-            </div>
-            <div class="flex-row" id="cards-row-red"></div>
-        </div>
+                <div class="player-control-block block-blue">
+                    <h3 style="color: blue; margin-top: 0; font-size: 14px;">NC XANH</h3>
+                    <div class="score-display-row">
+                        <div class="score-info-box" id="ctrl-blue-round-box" style="background: blue;">Điểm Vòng: 0</div>
+                        <div class="score-info-box" id="ctrl-blue-total-box" style="background: blue;">Điểm Tổng: 0</div>
+                    </div>
+                    <div class="flex-row" style="margin-bottom: 8px;">
+                        <input type="text" id="score-input-blue" placeholder="Nhập số điểm" oninput="formatNumberInput(this)">
+                        <button onclick="modifyScore('blue', 'total', 'add')" style="background: blue; color: white;">Tổng +</button>
+                        <button onclick="modifyScore('blue', 'round', 'add')" style="background: yellow; color: black;">Vòng +</button>
+                        <button onclick="modifyScore('blue', 'round', 'sub')" style="background: red; color: white;">Vòng -</button>
+                        <button onclick="multiplyRoundScore('blue', 1.5)" style="background: #800080; color: white; font-weight: bold;">x1.5</button>
+                        <button onclick="multiplyRoundScore('blue', 2)" style="background: #800080; color: white; font-weight: bold;">x2</button>
+                        <button onclick="divideRoundScore('blue', 2)" style="background: #800080; color: white; font-weight: bold;">:2</button>
+                        <button onclick="resetPlayerScore('blue', 'round')" style="background: #800080; color: white; font-weight: bold;">Reset vòng</button>
+                        <button onclick="resetPlayerScore('blue', 'total')" style="background: #800080; color: white; font-weight: bold;">Reset tổng</button>
+                    </div>
+                    <div class="flex-row" id="cards-row-blue"></div>
+                </div>
 
-        <div class="player-control-block block-yellow" style="background: black;">
-            <h3 style="color: yellow; margin-top: 0;">NC VÀNG</h3>
-            <div class="score-display-row">
-                <div class="score-info-box" id="ctrl-yellow-round-box" style="background: yellow; color: #000;">Điểm
-                    Vòng: 0</div>
-                <div class="score-info-box" id="ctrl-yellow-total-box" style="background: yellow; color: #000;">Điểm
-                    Tổng: 0</div>
+                <div class="flex-row"
+                    style="margin-top: 15px; border-top: 2px dashed #ccc; padding-top: 10px; justify-content: center;">
+                    <button onclick="resetAllScores('round')"
+                        style="background: purple; font-size: 13px; padding: 10px 15px;">Reset điểm vòng</button>
+                    <button onclick="resetAllScores('total')"
+                        style="background: #ff00ff; font-size: 13px; padding: 10px 15px;">Reset điểm tổng</button>
+                </div>
             </div>
-            <div class="flex-row" style="margin-bottom: 12px;">
-                <input type="text" id="score-input-yellow" placeholder="Nhập số điểm" oninput="formatNumberInput(this)">
-                <button onclick="modifyScore('yellow', 'total', 'add')" style="background: blue; color: white;">Tổng
-                    +</button>
-                <button onclick="modifyScore('yellow', 'round', 'add')" style="background: yellow; color: black;">Vòng
-                    +</button>
-                <button onclick="modifyScore('yellow', 'round', 'sub')" style="background: red; color: white;">Vòng
-                    -</button>
-                <button onclick="multiplyRoundScore('yellow', 1.5)" style="background: #800080; color: white; font-weight: bold;">x1.5</button>
-                <button onclick="multiplyRoundScore('yellow', 2)" style="background: #800080; color: white; font-weight: bold;">x2</button>
-                <button onclick="divideRoundScore('yellow', 2)" style="background: #800080; color: white; font-weight: bold;">:2</button>
-                <button onclick="resetPlayerScore('yellow', 'round')" style="background: #800080; color: white; font-weight: bold;">Reset vòng</button>
-                <button onclick="resetPlayerScore('yellow', 'total')" style="background: #800080; color: white; font-weight: bold;">Reset tổng</button>
-            </div>
-            <div class="flex-row" id="cards-row-yellow"></div>
-        </div>
-
-        <div class="player-control-block block-blue">
-            <h3 style="color: blue; margin-top: 0;">NC XANH</h3>
-            <div class="score-display-row">
-                <div class="score-info-box" id="ctrl-blue-round-box" style="background: blue;">Điểm Vòng: 0</div>
-                <div class="score-info-box" id="ctrl-blue-total-box" style="background: blue;">Điểm Tổng: 0</div>
-            </div>
-            <div class="flex-row" style="margin-bottom: 12px;">
-                <input type="text" id="score-input-blue" placeholder="Nhập số điểm" oninput="formatNumberInput(this)">
-                <button onclick="modifyScore('blue', 'total', 'add')" style="background: blue; color: white;">Tổng
-                    +</button>
-                <button onclick="modifyScore('blue', 'round', 'add')" style="background: yellow; color: black;">Vòng
-                    +</button>
-                <button onclick="modifyScore('blue', 'round', 'sub')" style="background: red; color: white;">Vòng
-                    -</button>
-                <button onclick="multiplyRoundScore('blue', 1.5)" style="background: #800080; color: white; font-weight: bold;">x1.5</button>
-                <button onclick="multiplyRoundScore('blue', 2)" style="background: #800080; color: white; font-weight: bold;">x2</button>
-                <button onclick="divideRoundScore('blue', 2)" style="background: #800080; color: white; font-weight: bold;">:2</button>
-                <button onclick="resetPlayerScore('blue', 'round')" style="background: #800080; color: white; font-weight: bold;">Reset vòng</button>
-                <button onclick="resetPlayerScore('blue', 'total')" style="background: #800080; color: white; font-weight: bold;">Reset tổng</button>
-            </div>
-            <div class="flex-row" id="cards-row-blue"></div>
-        </div>
-
-        <div class="flex-row"
-            style="margin-top: 25px; border-top: 2px dashed #ccc; padding-top: 15px; justify-content: center;">
-            <button onclick="resetAllScores('round')"
-                style="background: purple; font-size: 16px; padding: 12px 25px;">Reset điểm vòng</button>
-            <button onclick="resetAllScores('total')"
-                style="background: #ff00ff; font-size: 16px; padding: 12px 25px;">Reset điểm tổng</button>
         </div>
     </div>
 
@@ -700,11 +742,16 @@
             channel.subscribe();
         }
 
-        function sendEvent(eventName, payloadData) {
+        function requireRoom() {
             if (!roomId || !channel) {
-                showRoomError('Vui lòng chọn phòng trước khi điều khiển!');
-                return;
+                showRoomError('Vui lòng bấm nút "Tạo phòng mới" trước khi thao tác các chức năng!');
+                return false;
             }
+            return true;
+        }
+
+        function sendEvent(eventName, payloadData) {
+            if (!requireRoom()) return;
             channel.send({
                 type: 'broadcast',
                 event: eventName,
@@ -715,10 +762,12 @@
         let currentRotation = 262.5;
 
         function toggleWheel(type, isShow) {
+            if (!requireRoom()) return;
             sendEvent('toggle_wheel', { type, isShow });
         }
 
         async function spinWheel() {
+            if (!requireRoom()) return;
             await syncRotationFromWheel();
 
             const timeInput = document.getElementById('spinTime').value;
@@ -746,12 +795,14 @@
         }
 
         function setPointer(pointerName, state) {
+            if (!requireRoom()) return;
             sendEvent('pointer_light', { pointerName, state });
             globalPointerLights[pointerName] = state;
             updateWheelStateFields({ pointerLights: globalPointerLights });
         }
 
         function zoomPointer(type) {
+            if (!requireRoom()) return;
             if (type === 'out') {
                 // Ease out: Về góc thẳng và bỏ Zoom
                 sendEvent('zoom_pointer', { type: 'out' });
@@ -764,11 +815,13 @@
         }
 
         function toggleItem(itemName, isShow) {
+            if (!requireRoom()) return;
             sendEvent('toggle_item', { itemName, isShow });
         }
 
         // Thêm hàm xáo và phân bố điểm cho Nón Phụ
         function shuffleSubWheel() {
+            if (!requireRoom()) return;
             // Range điểm cố định gồm chuẩn xác 24 ô theo yêu cầu:
             // 5x15k, 4x20k, 4x25k, 3x30k, 3x35k, 2x40k, 2x45k, 1x50k (Tổng = 24 ô)
             let baseWedges = [
@@ -825,6 +878,7 @@
         let currentSpecialWedges = [];
 
         function shuffleSpecialWheel() {
+            if (!requireRoom()) return;
             const prizeRadio = document.querySelector('input[name="specialPrize"]:checked').value;
             const topPrize = parseInt(prizeRadio);
             let wedges = [
@@ -871,9 +925,10 @@
             });
         }
 
-        function showValue() { sendEvent('show_value', {}); }
-        function hideValue() { sendEvent('hide_value', {}); }
+        function showValue() { if (!requireRoom()) return; sendEvent('show_value', {}); }
+        function hideValue() { if (!requireRoom()) return; sendEvent('hide_value', {}); }
         function findHighestWedge() {
+            if (!requireRoom()) return;
             const startTime = Date.now();
             sendEvent('find_highest', { startTime });
         }
@@ -925,6 +980,7 @@
         }
 
         function syncScoresToWheel(saveToDb) {
+            if (!roomId) return;
             if (saveToDb !== false) saveRoomState();
             sendEvent('sync_scores', globalScores);
             document.getElementById('ctrl-red-round-box').innerText = "Điểm Vòng: " + globalScores.redRound.toLocaleString('vi-VN');
@@ -936,6 +992,7 @@
         }
 
         function modifyScore(color, type, operation) {
+            if (!requireRoom()) return;
             const inputEl = document.getElementById(`score-input-${color}`);
             // Loại bỏ tất cả dấu chấm trước khi tiến hành parse thành số nguyên xử lý tính toán
             let cleanValue = inputEl.value.replace(/\./g, "");
@@ -953,24 +1010,28 @@
         }
 
         function multiplyRoundScore(color, factor) {
+            if (!requireRoom()) return;
             let key = color + 'Round';
             globalScores[key] = Math.round(globalScores[key] * factor);
             syncScoresToWheel();
         }
 
         function divideRoundScore(color, divisor) {
+            if (!requireRoom()) return;
             let key = color + 'Round';
             globalScores[key] = Math.round(globalScores[key] / divisor);
             syncScoresToWheel();
         }
 
         function resetPlayerScore(color, type) {
+            if (!requireRoom()) return;
             let key = color + (type === 'round' ? 'Round' : 'Total');
             globalScores[key] = 0;
             syncScoresToWheel();
         }
 
         function resetAllScores(type) {
+            if (!requireRoom()) return;
             if (type === 'round') {
                 globalScores.redRound = 0;
                 globalScores.yellowRound = 0;
@@ -984,6 +1045,7 @@
         }
 
         function togglePlayerCardState(color, cardIdx) {
+            if (!requireRoom()) return;
             let currentState = !playerCardsState[color][cardIdx];
             playerCardsState[color][cardIdx] = currentState;
 
@@ -1009,6 +1071,7 @@
         }
 
         function resetWheelRotation() {
+            if (!requireRoom()) return;
             currentRotation = 262.5;
             sendEvent('reset_rotation', {});
             saveRoomState();
@@ -1016,6 +1079,7 @@
         }
 
         function setTurn(target, state) {
+            if (!requireRoom()) return;
             sendEvent('set_turn', { target, state });
             if (target === 'all') {
                 globalTurns.red = state;
@@ -1028,6 +1092,7 @@
         }
 
         function toggleSpinBtn(target, state) {
+            if (!requireRoom()) return;
             sendEvent('toggle_spin_btn', { target, state });
             if (target === 'all') {
                 globalSpinButtons.red = state;
@@ -1051,10 +1116,12 @@
 
         // BỔ SUNG: Hàm phát/dừng âm thanh theo phòng
         function triggerSound(soundFile) {
+            if (!requireRoom()) return;
             sendEvent('play_sound', { sound: soundFile, timestamp: Date.now() });
         }
         
         function easeTiltSubWheel(direction) {
+            if (!requireRoom()) return;
             sendEvent('tilt_sub_wheel', { direction: direction });
             updateWheelStateFields({ subWheelTilt: direction });
         }

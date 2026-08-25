@@ -122,6 +122,7 @@
 
         .block-yellow {
             border-color: yellow;
+            background: black;
         }
 
         .block-blue {
@@ -370,11 +371,16 @@
                     +</button>
                 <button onclick="modifyScore('red', 'round', 'sub')" style="background: red; color: white;">Vòng
                     -</button>
+                <button onclick="multiplyRoundScore('red', 1.5)" style="background: #800080; color: white; font-weight: bold;">x1.5</button>
+                <button onclick="multiplyRoundScore('red', 2)" style="background: #800080; color: white; font-weight: bold;">x2</button>
+                <button onclick="divideRoundScore('red', 2)" style="background: #800080; color: white; font-weight: bold;">:2</button>
+                <button onclick="resetPlayerScore('red', 'round')" style="background: #800080; color: white; font-weight: bold;">Reset vòng</button>
+                <button onclick="resetPlayerScore('red', 'total')" style="background: #800080; color: white; font-weight: bold;">Reset tổng</button>
             </div>
             <div class="flex-row" id="cards-row-red"></div>
         </div>
 
-        <div class="player-control-block block-yellow">
+        <div class="player-control-block block-yellow" style="background: black;">
             <h3 style="color: yellow; margin-top: 0;">NC VÀNG</h3>
             <div class="score-display-row">
                 <div class="score-info-box" id="ctrl-yellow-round-box" style="background: yellow; color: #000;">Điểm
@@ -390,6 +396,11 @@
                     +</button>
                 <button onclick="modifyScore('yellow', 'round', 'sub')" style="background: red; color: white;">Vòng
                     -</button>
+                <button onclick="multiplyRoundScore('yellow', 1.5)" style="background: #800080; color: white; font-weight: bold;">x1.5</button>
+                <button onclick="multiplyRoundScore('yellow', 2)" style="background: #800080; color: white; font-weight: bold;">x2</button>
+                <button onclick="divideRoundScore('yellow', 2)" style="background: #800080; color: white; font-weight: bold;">:2</button>
+                <button onclick="resetPlayerScore('yellow', 'round')" style="background: #800080; color: white; font-weight: bold;">Reset vòng</button>
+                <button onclick="resetPlayerScore('yellow', 'total')" style="background: #800080; color: white; font-weight: bold;">Reset tổng</button>
             </div>
             <div class="flex-row" id="cards-row-yellow"></div>
         </div>
@@ -408,6 +419,11 @@
                     +</button>
                 <button onclick="modifyScore('blue', 'round', 'sub')" style="background: red; color: white;">Vòng
                     -</button>
+                <button onclick="multiplyRoundScore('blue', 1.5)" style="background: #800080; color: white; font-weight: bold;">x1.5</button>
+                <button onclick="multiplyRoundScore('blue', 2)" style="background: #800080; color: white; font-weight: bold;">x2</button>
+                <button onclick="divideRoundScore('blue', 2)" style="background: #800080; color: white; font-weight: bold;">:2</button>
+                <button onclick="resetPlayerScore('blue', 'round')" style="background: #800080; color: white; font-weight: bold;">Reset vòng</button>
+                <button onclick="resetPlayerScore('blue', 'total')" style="background: #800080; color: white; font-weight: bold;">Reset tổng</button>
             </div>
             <div class="flex-row" id="cards-row-blue"></div>
         </div>
@@ -934,6 +950,24 @@
             }
             syncScoresToWheel();
             inputEl.value = '';
+        }
+
+        function multiplyRoundScore(color, factor) {
+            let key = color + 'Round';
+            globalScores[key] = Math.round(globalScores[key] * factor);
+            syncScoresToWheel();
+        }
+
+        function divideRoundScore(color, divisor) {
+            let key = color + 'Round';
+            globalScores[key] = Math.round(globalScores[key] / divisor);
+            syncScoresToWheel();
+        }
+
+        function resetPlayerScore(color, type) {
+            let key = color + (type === 'round' ? 'Round' : 'Total');
+            globalScores[key] = 0;
+            syncScoresToWheel();
         }
 
         function resetAllScores(type) {

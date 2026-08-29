@@ -59,8 +59,8 @@
         }
 
         .wheel-container {
-            width: 500px;
-            height: 500px;
+            width: 480px;
+            height: 480px;
             position: relative;
         }
 
@@ -68,9 +68,10 @@
             width: 100%;
             height: 100%;
             border-radius: 50%;
-            border: 5px solid white;
-            background-size: cover;
-            background-position: center;
+            border: 6px solid #ffffff;
+            box-sizing: border-box;
+            background-size: 100% 100%;
+            background-position: center center;
             background-repeat: no-repeat;
             box-shadow: 0 4px 15px rgba(0, 0, 0, 0.5);
             display: block;
@@ -126,15 +127,15 @@
         }
 
         .placed-item.is-card img {
-            top: 15px;
-            width: 10.5%;
-            max-height: 55px;
+            top: 32px;
+            width: 8.4%;
+            max-height: 44px;
             object-fit: contain;
             clip-path: none;
         }
 
         .placed-item.is-wedge img {
-            top: 13px;
+            top: 14px;
             width: 13.5%;
             height: 28%;
             clip-path: polygon(0% 0%, 100% 0%, 78.25% 100%, 21.75% 100%);
@@ -167,7 +168,7 @@
             height: 8px;
             background-color: #ffffff;
             border-radius: 50%;
-            top: 3.5px;
+            top: 14px;
             left: 50%;
             transform: translateX(-50%);
             box-shadow: 0 2px 4px rgba(0, 0, 0, 0.6);
@@ -198,7 +199,7 @@
 
         .pointer-body {
             position: absolute;
-            top: -57.5px;
+            top: -35px;
             left: 50%;
             transform: translateX(-50%);
             filter: drop-shadow(0px 3px 5px rgba(0, 0, 0, 0.4));
@@ -466,6 +467,7 @@
             wheelGraphic.style.transform = 'rotate(' + currentRotation + 'deg)';
             wheelGraphic.style.display = state.wheelDisplay || 'block';
             wheelGraphic.style.backgroundImage = state.wheelBg || "url('./Nón.png')";
+            wheelGraphic.style.backgroundPosition = 'center center';
             activeWheelType = inferWheelTypeFromBg(state.wheelBg || wheelGraphic.style.backgroundImage);
 
             // BỔ SUNG: Khôi phục chính xác góc nghiêng/zoom khi F5 hoặc mở muộn
@@ -529,15 +531,18 @@
 
             if (type === 'special') {
                 wheelGraphic.style.backgroundImage = "url('./Nón Đặc Biệt.png')";
+                wheelGraphic.style.backgroundPosition = 'center center';
                 isSpecialMode = true;
                 activeWheelType = 'special';
             } else if (type === 'sub_wheel') {
                 // Cập nhật đường dẫn ảnh cho màn hình phụ
                 wheelGraphic.style.backgroundImage = "url('./Nón Phụ.png')";
+                wheelGraphic.style.backgroundPosition = 'center center';
                 isSpecialMode = true; // Kích hoạt biến trạng thái xử lý logic hiển thị popup và tính toán ô điểm
                 activeWheelType = 'sub_wheel';
             } else {
                 wheelGraphic.style.backgroundImage = "url('./Nón.png')";
+                wheelGraphic.style.backgroundPosition = 'center center';
                 isSpecialMode = false;
                 activeWheelType = 'normal';
                 specialValuePopup.style.display = 'none';

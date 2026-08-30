@@ -64,19 +64,35 @@
             position: relative;
         }
 
+        .wheel-container::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 97%;
+            height: 97%;
+            border-radius: 50%;
+            background-color: #000000;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.5);
+            z-index: 0;
+        }
+
         #wheelGraphic {
             width: 100%;
             height: 100%;
             border-radius: 50%;
-            border: 6px solid #ffffff;
+            border: none;
             box-sizing: border-box;
-            background-size: 100% 100%;
+            background-color: transparent;
+            background-size: 95% 95%;
             background-position: center center;
             background-repeat: no-repeat;
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.5);
+            box-shadow: none;
             display: block;
             background-image: url('./Nón.png');
             position: relative;
+            z-index: 1;
         }
 
         /* KHUNG HÌNH CHỮ NHẬT TRUNG TÂM */
@@ -127,18 +143,18 @@
         }
 
         .placed-item.is-card img {
-            top: 32px;
-            width: 8.4%;
+            top: 25px;
+            width: 8.2%;
             max-height: 44px;
             object-fit: contain;
             clip-path: none;
         }
 
         .placed-item.is-wedge img {
-            top: 14px;
-            width: 13.5%;
-            height: 28%;
-            clip-path: polygon(0% 0%, 100% 0%, 78.25% 100%, 21.75% 100%);
+            top: 17px;
+            width: 11.9%;
+            height: 28.7%;
+            clip-path: none;
             object-fit: fill;
         }
 
@@ -168,7 +184,7 @@
             height: 8px;
             background-color: #ffffff;
             border-radius: 50%;
-            top: 14px;
+            top: 8px;
             left: 50%;
             transform: translateX(-50%);
             box-shadow: 0 2px 4px rgba(0, 0, 0, 0.6);
@@ -199,7 +215,7 @@
 
         .pointer-body {
             position: absolute;
-            top: -35px;
+            top: -42px;
             left: 50%;
             transform: translateX(-50%);
             filter: drop-shadow(0px 3px 5px rgba(0, 0, 0, 0.4));

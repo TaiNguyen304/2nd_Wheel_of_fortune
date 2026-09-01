@@ -577,14 +577,14 @@
             await supabase.from('game_room_state').insert({
                 room_id: newRoomId,
                 wheel_state: {
-                    currentRotation: 262.5,
+                    currentRotation: 270,
                     isSpecialMode: false,
                     specialWedges: [],
                     wheelDisplay: 'block',
                     wheelBg: "url('./Nón.png')",
                     zoomed: false,
                     popupDisplay: 'none',
-                    popupText: '0 điểm',
+                    popupText: '0',
                     itemsState: {},
                     turns: { red: false, yellow: false, blue: false },
                     spinButtons: { red: false, yellow: false, blue: false },
@@ -592,7 +592,7 @@
                 },
                 scores: defaultScores,
                 player_cards: defaultCards,
-                controller_rotation: 262.5
+                controller_rotation: 270
             });
 
             roomId = newRoomId;
@@ -674,6 +674,14 @@
                 if (data.wheel_state.pointerLights) {
                     globalPointerLights = Object.assign(globalPointerLights, data.wheel_state.pointerLights);
                 }
+                if (data.wheel_state.specialWedges && data.wheel_state.specialWedges.length > 0) {
+                    currentSpecialWedges = data.wheel_state.specialWedges;
+                    if (data.wheel_state.activeWheelType === 'sub_wheel') {
+                        renderSubGrid(currentSpecialWedges);
+                    } else {
+                        renderGrid(currentSpecialWedges);
+                    }
+                }
             }
             syncScoresToWheel(false);
         }
@@ -730,8 +738,8 @@
             channel.on('broadcast', { event: 'spin_wheel' }, function (payload) {
                 updateControllerRotationFromSpin(payload.payload);
             }).on('broadcast', { event: 'reset_rotation' }, function () {
-                currentRotation = 262.5;
-                updateWheelStateFields({ currentRotation: 262.5 });
+                currentRotation = 270;
+                updateWheelStateFields({ currentRotation: 270 });
             }).on('broadcast', { event: 'find_highest' }, function (payload) {
                 if (payload.payload && payload.payload.targetRot !== undefined && payload.payload.targetRot !== null) {
                     currentRotation = parseFloat(payload.payload.targetRot);
@@ -759,7 +767,7 @@
             });
         }
 
-        let currentRotation = 262.5;
+        let currentRotation = 270;
 
         function toggleWheel(type, isShow) {
             if (!requireRoom()) return;
@@ -822,8 +830,6 @@
         // Thêm hàm xáo và phân bố điểm cho Nón Phụ
         function shuffleSubWheel() {
             if (!requireRoom()) return;
-            // Range điểm cố định gồm chuẩn xác 24 ô theo yêu cầu:
-            // 5x15k, 4x20k, 4x25k, 3x30k, 3x35k, 2x40k, 2x45k, 1x50k (Tổng = 24 ô)
             let baseWedges = [
                 5000, 5000, 5000, 5000, 5000,
                 10000, 10000, 10000, 10000,
@@ -845,6 +851,7 @@
 
             // Gửi sự kiện cập nhật cấu trúc mảng nón phụ sang hệ thống Realtime
             sendEvent('shuffle_special', { wedges: baseWedges });
+            updateWheelStateFields({ specialWedges: baseWedges, popupDisplay: 'none' });
 
             // Render sơ đồ màu sắc đồ họa hiển thị lên Controller
             renderSubGrid(baseWedges);
@@ -893,13 +900,14 @@
             currentSpecialWedges = wedges;
             renderGrid(wedges);
             sendEvent('shuffle_special', { wedges: wedges });
+            updateWheelStateFields({ specialWedges: wedges, popupDisplay: 'none' });
         }
 
         function renderGrid(wedges) {
             const container = document.getElementById('specialGridContainer');
             container.innerHTML = '';
             if (!wedges || wedges.length === 0) return;
-            const parseVal = (v) => typeof v === 'string' ? parseInt(v.replace('x', '')) : v;
+            const parseVal = (v) => typeof v === 'string' ? parseInt(v.replace(/[^0-9]/g, '')) : v;
             const numericWedges = wedges.map(parseVal);
             const uniqueSorted = [...new Set(numericWedges)].sort((a, b) => b - a);
             const highestVal = uniqueSorted[0];
@@ -925,12 +933,61 @@
             });
         }
 
-        function showValue() { if (!requireRoom()) return; sendEvent('show_value', {}); }
-        function hideValue() { if (!requireRoom()) return; sendEvent('hide_value', {}); }
+        function computeWedgeAtRotation(rotation, wedges) {
+            if (!wedges || wedges.length === 0) return { index: 0, text: "Chưa xáo giá trị", value: null };
+            const normalizeAngle = (angle) => ((angle % 360) + 360) % 360;
+            let angleAtTop = normalizeAngle(360 - normalizeAngle(rotation));
+            let wedgeIndex = Math.floor((angleAtTop + 7.5) / 15) % 24;
+            if (wedgeIndex < 0) wedgeIndex = 0;
+            if (wedgeIndex > 23) wedgeIndex = 23;
+            let result = wedges[wedgeIndex];
+            let displayText = typeof result === 'number' ? result.toLocaleString('vi-VN') : (result || "0");
+            return { index: wedgeIndex, value: result, text: displayText };
+        }
+
+        function showValue() {
+            if (!requireRoom()) return;
+            if (!currentSpecialWedges || currentSpecialWedges.length === 0) return;
+            const info = computeWedgeAtRotation(currentRotation, currentSpecialWedges);
+            sendEvent('show_value', {
+                wedgeIndex: info.index,
+                displayText: info.text,
+                value: info.value
+            });
+            updateWheelStateFields({ popupDisplay: 'block', popupText: info.text });
+        }
+
+        function hideValue() {
+            if (!requireRoom()) return;
+            sendEvent('hide_value', {});
+            updateWheelStateFields({ popupDisplay: 'none' });
+        }
+
         function findHighestWedge() {
             if (!requireRoom()) return;
+            if (!currentSpecialWedges || currentSpecialWedges.length === 0) return;
+            const parseVal = (v) => typeof v === 'string' ? parseInt(v.replace(/[^0-9]/g, '')) : v;
+            const numericValues = currentSpecialWedges.map(parseVal);
+            const maxVal = Math.max(...numericValues);
+            const targetIndex = numericValues.indexOf(maxVal);
+            const targetCenterAngle = targetIndex * 15;
+            const normalizeAngle = (angle) => ((angle % 360) + 360) % 360;
+            const currentNormalized = normalizeAngle(currentRotation);
+            let targetAngleDiff = (360 - targetCenterAngle) - currentNormalized;
+            if (targetAngleDiff <= 0) targetAngleDiff += 360;
+            const targetRot = currentRotation + targetAngleDiff + 1080;
+            const realValue = currentSpecialWedges[targetIndex];
+            const displayText = typeof realValue === 'number' ? realValue.toLocaleString('vi-VN') : (realValue || "0");
             const startTime = Date.now();
-            sendEvent('find_highest', { startTime });
+
+            currentRotation = targetRot;
+            sendEvent('find_highest', {
+                startTime: startTime,
+                targetRot: targetRot,
+                targetIndex: targetIndex,
+                displayText: displayText
+            });
+            updateWheelStateFields({ currentRotation: targetRot, popupDisplay: 'block', popupText: displayText, specialWedges: currentSpecialWedges });
         }
 
         const itemsList = [
@@ -1072,10 +1129,10 @@
 
         function resetWheelRotation() {
             if (!requireRoom()) return;
-            currentRotation = 262.5;
+            currentRotation = 270;
             sendEvent('reset_rotation', {});
             saveRoomState();
-            updateWheelStateFields({ currentRotation: 262.5, popupDisplay: 'none' });
+            updateWheelStateFields({ currentRotation: 270, popupDisplay: 'none' });
         }
 
         function setTurn(target, state) {

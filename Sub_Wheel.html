@@ -103,11 +103,13 @@
             transform: translate(-50%, -50%);
             background-color: purple;
             color: white;
-            padding: 12px 24px;
-            font-size: 26px;
-            border-radius: 8px;
-            border: 3px solid white;
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.7);
+            padding: 18px 42px;
+            min-width: 180px;
+            font-size: 38px;
+            font-weight: 800;
+            border-radius: 0;
+            border: 4px solid white;
+            box-shadow: 0 4px 18px rgba(0, 0, 0, 0.7);
             z-index: 999;
             display: none;
             text-align: center;
@@ -215,12 +217,11 @@
 
         .pointer-body {
             position: absolute;
-            top: -42px;
+            top: -15px;
             left: 50%;
             transform: translateX(-50%);
             filter: drop-shadow(0px 3px 5px rgba(0, 0, 0, 0.4));
         }
-
         .pointer-body svg path {
             transition: fill 0.2s;
         }
@@ -249,31 +250,31 @@
                 <div class="dots-ring" id="dotsRing"></div>
             </div>
 
-            <div id="specialValuePopup">0 điểm</div>
+            <div id="specialValuePopup">0</div>
 
             <div class="pointer-wrapper wrapper-red">
                 <div class="pointer-body" id="pointer-red">
-                    <svg width="46" height="60" viewBox="0 0 46 60" style="display: block;">
-                        <path d="M23,60 C9,38 0,28 0,18 A23,18 0 0,1 46,18 C46,28 37,38 23,60 Z" fill="var(--p-color)"
-                            stroke="white" stroke-width="2" stroke-linejoin="round" />
+                    <svg width="20" height="34" viewBox="0 0 20 34" style="display: block;">
+                        <path d="M 10,32.8 L 1.88,13.4 A 8.8,8.8 0 1 1 18.12,13.4 Z" fill="var(--p-color)"
+                            stroke="white" stroke-width="1.5" stroke-linejoin="round" />
                     </svg>
                 </div>
             </div>
 
             <div class="pointer-wrapper wrapper-yellow">
                 <div class="pointer-body" id="pointer-yellow">
-                    <svg width="46" height="60" viewBox="0 0 46 60" style="display: block;">
-                        <path d="M23,60 C9,38 0,28 0,18 A23,18 0 0,1 46,18 C46,28 37,38 23,60 Z" fill="var(--p-color)"
-                            stroke="white" stroke-width="2" stroke-linejoin="round" />
+                    <svg width="20" height="34" viewBox="0 0 20 34" style="display: block;">
+                        <path d="M 10,32.8 L 1.88,13.4 A 8.8,8.8 0 1 1 18.12,13.4 Z" fill="var(--p-color)"
+                            stroke="white" stroke-width="1.5" stroke-linejoin="round" />
                     </svg>
                 </div>
             </div>
 
             <div class="pointer-wrapper wrapper-blue">
                 <div class="pointer-body" id="pointer-blue">
-                    <svg width="46" height="60" viewBox="0 0 46 60" style="display: block;">
-                        <path d="M23,60 C9,38 0,28 0,18 A23,18 0 0,1 46,18 C46,28 37,38 23,60 Z" fill="var(--p-color)"
-                            stroke="white" stroke-width="2" stroke-linejoin="round" />
+                    <svg width="20" height="34" viewBox="0 0 20 34" style="display: block;">
+                        <path d="M 10,32.8 L 1.88,13.4 A 8.8,8.8 0 1 1 18.12,13.4 Z" fill="var(--p-color)"
+                            stroke="white" stroke-width="1.5" stroke-linejoin="round" />
                     </svg>
                 </div>
             </div>
@@ -378,23 +379,23 @@
         const specialValuePopup = document.getElementById('specialValuePopup');
 
         const itemsPlacementConfig = {
-            "Thẻ Phần thưởng 1": { angle: 22.5, img: "Thẻ Phần Thưởng.png" },
-            "Thẻ Phần thưởng 2": { angle: 187.5, img: "Thẻ Phần Thưởng.png" },
-            "Thẻ Phần thưởng 3": { angle: 262.5, img: "Thẻ Phần Thưởng.png" },
-            "Thẻ Phần thưởng 4": { angle: 337.5, img: "Thẻ Phần Thưởng.png" },
-            "Thẻ Bí Mật 1": { angle: 112.5, img: "Thẻ Bí Mật.png" },
-            "Thẻ Bí Mật 2": { angle: 247.5, img: "Thẻ Bí Mật.png" },
-            "Thẻ Bảo vệ": { angle: 217.5, img: "Thẻ Bảo Vệ.png" },
-            "Thẻ Thêm lượt": { angle: 322.5, img: "Thẻ Thêm Lượt.png" },
-            "Thẻ Cơ Hội": { angle: 52.5, img: "Thẻ Cơ Hội.png" },
-            "Thẻ Kháng Mất điểm": { angle: 157.5, img: "Thẻ Kháng Mất Điểm.png" },
-            "Ô 100.000": { angle: 172.5, img: "Ô 100000.png" },
-            "Ô Mất điểm": { angle: 292.5, img: "Ô Mất Điểm.png" },
-            "Ô 2.000": { angle: 97.5, img: "Ô 2000.png" },
-            "Ô 2.500 1": { angle: 97.5, img: "Ô 2500.png" },
-            "Ô 2.500 2": { angle: 187.5, img: "Ô 2500.png" },
-            "Ô 2.500 3": { angle: 262.5, img: "Ô 2500.png" },
-            "Ô 2.500 4": { angle: 337.5, img: "Ô 2500.png" }
+            "Thẻ Phần thưởng 1": { angle: 15, img: "Thẻ Phần Thưởng.png" },
+            "Thẻ Phần thưởng 2": { angle: 180, img: "Thẻ Phần Thưởng.png" },
+            "Thẻ Phần thưởng 3": { angle: 255, img: "Thẻ Phần Thưởng.png" },
+            "Thẻ Phần thưởng 4": { angle: 330, img: "Thẻ Phần Thưởng.png" },
+            "Thẻ Bí Mật 1": { angle: 105, img: "Thẻ Bí Mật.png" },
+            "Thẻ Bí Mật 2": { angle: 240, img: "Thẻ Bí Mật.png" },
+            "Thẻ Bảo vệ": { angle: 210, img: "Thẻ Bảo Vệ.png" },
+            "Thẻ Thêm lượt": { angle: 315, img: "Thẻ Thêm Lượt.png" },
+            "Thẻ Cơ Hội": { angle: 45, img: "Thẻ Cơ Hội.png" },
+            "Thẻ Kháng Mất điểm": { angle: 150, img: "Thẻ Kháng Mất Điểm.png" },
+            "Ô 100.000": { angle: 165, img: "Ô 100000.png" },
+            "Ô Mất điểm": { angle: 285, img: "Ô Mất Điểm.png" },
+            "Ô 2.000": { angle: 90, img: "Ô 2000.png" },
+            "Ô 2.500 1": { angle: 90, img: "Ô 2500.png" },
+            "Ô 2.500 2": { angle: 180, img: "Ô 2500.png" },
+            "Ô 2.500 3": { angle: 255, img: "Ô 2500.png" },
+            "Ô 2.500 4": { angle: 330, img: "Ô 2500.png" }
         };
 
         Object.keys(itemsPlacementConfig).forEach(itemName => {
@@ -420,7 +421,7 @@
         for (let i = 0; i < 72; i++) {
             const wrapper = document.createElement('div');
             wrapper.className = 'dot-wrapper';
-            wrapper.style.transform = `rotate(${i * 5}deg)`;
+            wrapper.style.transform = `rotate(${i * 5 - 7.5}deg)`;
             const dot = document.createElement('div');
             dot.className = 'dot';
             wrapper.appendChild(dot);
@@ -498,7 +499,7 @@
             }
 
             specialValuePopup.style.display = state.popupDisplay || 'none';
-            specialValuePopup.innerText = state.popupText || '0 điểm';
+            specialValuePopup.innerText = state.popupText || '0';
 
             if (state.itemsState) {
                 Object.keys(state.itemsState).forEach(itemName => {
@@ -647,9 +648,9 @@
         function executeResetRotation() {
             if (animationFrameId) cancelAnimationFrame(animationFrameId);
             isSpinningNow = false;
-            currentRotation = 262.5;
+            currentRotation = 270;
             wheelGraphic.style.transition = 'transform 0.5s cubic-bezier(0.25, 1, 0.5, 1)';
-            wheelGraphic.style.transform = 'rotate(262.5deg)';
+            wheelGraphic.style.transform = 'rotate(270deg)';
             specialValuePopup.style.display = 'none';
             setTimeout(saveWheelState, 600);
         }
@@ -668,20 +669,29 @@
         }
 
         function getWedgeValueAtYellowPointer() {
-            if (!isSpecialMode || specialWedges.length === 0) return "Chưa xáo giá trị";
+            if (!isSpecialMode || !specialWedges || specialWedges.length === 0) return "Chưa xáo giá trị";
             const rotation = getVisualRotation();
             let angleAtTop = normalizeAngle(360 - normalizeAngle(rotation));
-            let wedgeIndex = Math.floor(angleAtTop / 15);
+            let wedgeIndex = Math.floor((angleAtTop + 7.5) / 15) % 24;
             if (wedgeIndex < 0) wedgeIndex = 0;
             if (wedgeIndex > 23) wedgeIndex = 23;
             let result = specialWedges[wedgeIndex];
-            return typeof result === 'number' ? result.toLocaleString() + " điểm" : result;
+            return typeof result === 'number' ? result.toLocaleString('vi-VN') : (result || "0");
         }
 
-        function executeShowValue() {
+        function executeShowValue(wedgeIndexFromSource, displayTextFromSource) {
             if (!isSpecialMode) return;
             currentRotation = getVisualRotation();
-            specialValuePopup.innerText = getWedgeValueAtYellowPointer();
+            let displayText = displayTextFromSource;
+            if (!displayText) {
+                if (wedgeIndexFromSource !== undefined && wedgeIndexFromSource !== null && specialWedges && specialWedges.length > 0) {
+                    let val = specialWedges[wedgeIndexFromSource];
+                    displayText = typeof val === 'number' ? val.toLocaleString('vi-VN') : (val || "0");
+                } else {
+                    displayText = getWedgeValueAtYellowPointer();
+                }
+            }
+            specialValuePopup.innerText = displayText;
             specialValuePopup.style.display = 'block';
             saveWheelState();
         }
@@ -691,12 +701,12 @@
             saveWheelState();
         }
 
-        function executeFindHighest(startTime, targetRotFromSource, targetIndexFromSource) {
+        function executeFindHighest(startTime, targetRotFromSource, targetIndexFromSource, displayTextFromSource) {
             if (animationFrameId) cancelAnimationFrame(animationFrameId);
             if (!isSpecialMode || specialWedges.length === 0) return;
             isSpinningNow = true;
 
-            const parseVal = (v) => typeof v === 'string' ? parseInt(v.replace('x', '')) : v;
+            const parseVal = (v) => typeof v === 'string' ? parseInt(v.replace(/[^0-9]/g, '')) : v;
             let targetIndex;
             let targetRot;
 
@@ -708,7 +718,7 @@
                 const numericValues = specialWedges.map(parseVal);
                 const maxVal = Math.max(...numericValues);
                 targetIndex = numericValues.indexOf(maxVal);
-                const targetCenterAngle = (targetIndex * 15) + 7.5;
+                const targetCenterAngle = targetIndex * 15;
                 const currentNormalized = normalizeAngle(getVisualRotation());
                 let targetAngleDiff = (360 - targetCenterAngle) - currentNormalized;
                 if (targetAngleDiff <= 0) targetAngleDiff += 360;
@@ -738,7 +748,8 @@
                     wheelGraphic.style.transform = `rotate(${targetRot}deg)`;
 
                     let realValue = specialWedges[targetIndex];
-                    specialValuePopup.innerText = typeof realValue === 'number' ? realValue.toLocaleString() + " điểm" : realValue;
+                    let displayText = displayTextFromSource || (typeof realValue === 'number' ? realValue.toLocaleString('vi-VN') : (realValue || "0"));
+                    specialValuePopup.innerText = displayText;
                     specialValuePopup.style.display = 'block';
 
                     saveWheelState();
@@ -788,13 +799,20 @@
                 specialWedges = payload.payload.wedges;
                 specialValuePopup.style.display = 'none';
                 saveWheelState();
-            }).on('broadcast', { event: 'show_value' }, function () {
-                executeShowValue();
+            }).on('broadcast', { event: 'show_value' }, function (payload) {
+                executeShowValue(
+                    payload && payload.payload ? payload.payload.wedgeIndex : undefined,
+                    payload && payload.payload ? payload.payload.displayText : undefined
+                );
             }).on('broadcast', { event: 'hide_value' }, function () {
                 executeHideValue();
             }).on('broadcast', { event: 'find_highest' }, function (payload) {
-                // SỬA LẠI: truyền đúng tham số
-                executeFindHighest(undefined, payload.payload.targetRot, payload.payload.targetIndex);
+                executeFindHighest(
+                    payload && payload.payload ? payload.payload.startTime : undefined,
+                    payload && payload.payload ? payload.payload.targetRot : undefined,
+                    payload && payload.payload ? payload.payload.targetIndex : undefined,
+                    payload && payload.payload ? payload.payload.displayText : undefined
+                );
             }).on('broadcast', { event: 'reset_rotation' }, function () {
                 executeResetRotation();
             }).on('broadcast', { event: 'play_sound' }, function (payload) {

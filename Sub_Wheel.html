@@ -101,8 +101,8 @@
             top: 50%;
             left: 50%;
             transform: translate(-50%, -50%);
-            background-color: purple;
-            color: white;
+            background-color: #eeb336;
+            color: black;
             padding: 18px 42px;
             min-width: 180px;
             font-size: 38px;
@@ -327,6 +327,19 @@
         // BỔ SUNG: Khai báo đối tượng Audio toàn cục
         let currentGlobalAudio = null;
 
+        function getSoundVolume(soundFile) {
+            const lowVolumeTracks = [
+                'toss_up.mp3',
+                'express_2.mp3',
+                'speed_up.mp3',
+                'nghia.mp3',
+                '3l.mp3',
+                '10s.mp3'
+            ];
+            const fileName = soundFile ? soundFile.split('/').pop().toLowerCase() : '';
+            return lowVolumeTracks.includes(fileName) ? 0.3 : 1.0;
+        }
+
         function playSoundEffect(soundFile) {
             if (soundFile === 'STOP') {
                 if (currentGlobalAudio) {
@@ -343,6 +356,7 @@
 
             // Đảm bảo file âm thanh nằm chung thư mục với file HTML
             currentGlobalAudio = new Audio('./' + soundFile);
+            currentGlobalAudio.volume = getSoundVolume(soundFile);
             currentGlobalAudio.play().catch(function (error) {
                 console.warn("Chưa tương tác với trang nên chưa thể autoplay sound:", error);
             });

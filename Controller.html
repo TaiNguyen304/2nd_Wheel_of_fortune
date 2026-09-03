@@ -106,6 +106,7 @@
 
         button.btn-off {
             background: #ff00ff;
+            color: black;
         }
 
         button.btn-off:hover {
@@ -315,7 +316,7 @@
                         <button onclick="easeTiltSubWheel('red')" style="background: red; color: white;">Ease in Đỏ</button>
                         <button onclick="zoomPointer('in')" style="background: yellow; color: black;">Ease in Vàng</button>
                         <button onclick="easeTiltSubWheel('blue')" style="background: blue; color: white;">Ease in Xanh</button>
-                        <button onclick="zoomPointer('out')" style="background: #ff00ff; color: white;">Ease out</button>
+                        <button onclick="zoomPointer('out')" style="background: #ff00ff; color: black;">Ease out</button>
                     </div>
                 </div>
             </div>
@@ -473,7 +474,7 @@
                     <button onclick="resetAllScores('round')"
                         style="background: purple; font-size: 13px; padding: 10px 15px;">Reset điểm vòng</button>
                     <button onclick="resetAllScores('total')"
-                        style="background: #ff00ff; font-size: 13px; padding: 10px 15px;">Reset điểm tổng</button>
+                        style="background: #ff00ff; color: black; font-size: 13px; padding: 10px 15px;">Reset điểm tổng</button>
                 </div>
             </div>
         </div>
@@ -873,10 +874,13 @@
                 // Xử lý phân bổ sơ đồ màu sắc theo yêu cầu đề bài
                 if (val === 30000) {
                     cell.style.backgroundColor = 'purple'; // Ô 30.000 màu tím
+                    cell.style.color = 'white';
                 } else if (val === 25000) {
                     cell.style.backgroundColor = '#ff00ff'; // Ô 25.000 màu ff00ff
+                    cell.style.color = 'black'; // Chữ màu đen cho ô màu hồng
                 } else {
                     cell.style.backgroundColor = 'red'; // Các ô còn lại màu đỏ
+                    cell.style.color = 'white';
                 }
                 container.appendChild(cell);
             });

@@ -245,6 +245,35 @@
                 <div id="roomError" style="margin-top: 8px; color: red; font-size: 13px;"></div>
             </div>
 
+            <!-- MỤC BÍ MẬT -->
+            <div class="section">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+                    <h2 style="margin: 0;">Bí mật</h2>
+                    <button onclick="randomMysteryValues()" style="background: #ffff00; color: #000000; padding: 5px 12px; font-size: 13px; border-radius: 4px; border: 1px solid #cca300; cursor: pointer; font-weight: bold; transition: 0.2s;" onmouseover="this.style.background='#ffea00'" onmouseout="this.style.background='#ffff00'">Random</button>
+                </div>
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px;">
+                    <!-- Hàng 1: 2 ô 2.500 BM 600, 900 BM 300 -->
+                    <div style="background: #1e293b; color: #facc15; padding: 10px 4px; text-align: center; border-radius: 5px; font-weight: bold; font-size: 13px; border: 1px solid #eab308; box-shadow: inset 0 0 5px rgba(0,0,0,0.5);">
+                        2.500 BM 600
+                    </div>
+                    <div style="background: #1e293b; color: #facc15; padding: 10px 4px; text-align: center; border-radius: 5px; font-weight: bold; font-size: 13px; border: 1px solid #eab308; box-shadow: inset 0 0 5px rgba(0,0,0,0.5);">
+                        900 BM 300
+                    </div>
+
+                    <!-- Hàng 2: Giá trị của 2 ô này (1 là x2, 1 là Mất điểm) -->
+                    <div id="mystery-val-1" onclick="toggleMysteryTile(0)" style="cursor: pointer; background: #008000; color: white; padding: 10px 4px; text-align: center; border-radius: 5px; font-weight: bold; font-size: 14px; border: 2px solid white; user-select: none; transition: 0.2s; box-shadow: 0 2px 4px rgba(0,0,0,0.3);" title="Nhấp để đổi giá trị">
+                        x2
+                    </div>
+                    <div id="mystery-val-2" onclick="toggleMysteryTile(1)" style="cursor: pointer; background: #ff0000; color: white; padding: 10px 4px; text-align: center; border-radius: 5px; font-weight: bold; font-size: 14px; border: 2px solid white; user-select: none; transition: 0.2s; box-shadow: 0 2px 4px rgba(0,0,0,0.3);" title="Nhấp để đổi giá trị">
+                        Mất điểm
+                    </div>
+                </div>
+                <div style="display: flex; gap: 6px; margin-top: 8px;">
+                    <button onclick="toggleMysteryHidden()" id="btnMysteryHidden" style="flex: 1; background: #334155; color: white; padding: 5px; font-size: 11px; border: 1px solid #64748b; border-radius: 4px; cursor: pointer;">Ẩn / Hiện</button>
+                    <button onclick="swapMysteryValues()" style="flex: 1; background: #334155; color: white; padding: 5px; font-size: 11px; border: 1px solid #64748b; border-radius: 4px; cursor: pointer;">Đổi Chỗ</button>
+                </div>
+            </div>
+
             <!-- MỤC QUẢN LÝ SOUNDBOARD -->
             <div class="section">
                 <h2>Quản lý Soundboard</h2>
@@ -674,6 +703,10 @@
                 }
                 if (data.wheel_state.pointerLights) {
                     globalPointerLights = Object.assign(globalPointerLights, data.wheel_state.pointerLights);
+                }
+                if (data.wheel_state.mysteryValues && Array.isArray(data.wheel_state.mysteryValues)) {
+                    mysteryValues = data.wheel_state.mysteryValues;
+                    updateMysteryUI();
                 }
                 if (data.wheel_state.specialWedges && data.wheel_state.specialWedges.length > 0) {
                     currentSpecialWedges = data.wheel_state.specialWedges;
@@ -1165,9 +1198,99 @@
             updateWheelStateFields({ spinButtons: globalSpinButtons });
         }
 
+        // QUẢN LÝ THẺ BÍ MẬT
+        let mysteryValues = ['x2', 'Mất điểm'];
+        let isMysteryHidden = false;
+
+        function updateMysteryUI() {
+            const el1 = document.getElementById('mystery-val-1');
+            const el2 = document.getElementById('mystery-val-2');
+            const btnHide = document.getElementById('btnMysteryHidden');
+            if (!el1 || !el2) return;
+
+            const val1 = mysteryValues[0];
+            const val2 = mysteryValues[1];
+
+            if (isMysteryHidden) {
+                el1.innerText = 'Bí mật';
+                el1.style.background = '#475569';
+                el1.style.color = '#e2e8f0';
+
+                el2.innerText = 'Bí mật';
+                el2.style.background = '#475569';
+                el2.style.color = '#e2e8f0';
+                if (btnHide) btnHide.innerText = 'Hiện';
+            } else {
+                el1.innerText = val1;
+                el1.style.background = val1 === 'x2' ? '#008000' : '#ff0000';
+                el1.style.color = '#ffffff';
+
+                el2.innerText = val2;
+                el2.style.background = val2 === 'x2' ? '#008000' : '#ff0000';
+                el2.style.color = '#ffffff';
+                if (btnHide) btnHide.innerText = 'Ẩn';
+            }
+        }
+
+        function randomMysteryValues() {
+            if (Math.random() < 0.5) {
+                mysteryValues = ['x2', 'Mất điểm'];
+            } else {
+                mysteryValues = ['Mất điểm', 'x2'];
+            }
+            updateMysteryUI();
+            saveMysteryState();
+        }
+
+        function swapMysteryValues() {
+            mysteryValues = [mysteryValues[1], mysteryValues[0]];
+            updateMysteryUI();
+            saveMysteryState();
+        }
+
+        function toggleMysteryTile(index) {
+            const current = mysteryValues[index];
+            const newVal = current === 'x2' ? 'Mất điểm' : 'x2';
+            mysteryValues[index] = newVal;
+            const otherIdx = index === 0 ? 1 : 0;
+            mysteryValues[otherIdx] = newVal === 'x2' ? 'Mất điểm' : 'x2';
+            updateMysteryUI();
+            saveMysteryState();
+        }
+
+        function toggleMysteryHidden() {
+            isMysteryHidden = !isMysteryHidden;
+            updateMysteryUI();
+        }
+
+        function saveMysteryState() {
+            const key = roomId ? 'mystery_values_' + roomId : 'mystery_values_default';
+            try {
+                localStorage.setItem(key, JSON.stringify(mysteryValues));
+            } catch (e) { }
+            if (roomId) {
+                updateWheelStateFields({ mysteryValues: mysteryValues });
+            }
+        }
+
+        function loadMysteryState() {
+            const key = roomId ? 'mystery_values_' + roomId : 'mystery_values_default';
+            try {
+                const saved = localStorage.getItem(key);
+                if (saved) {
+                    const parsed = JSON.parse(saved);
+                    if (Array.isArray(parsed) && parsed.length === 2) {
+                        mysteryValues = parsed;
+                    }
+                }
+            } catch (e) { }
+            updateMysteryUI();
+        }
+
         initPlayerCardControls('red');
         initPlayerCardControls('yellow');
         initPlayerCardControls('blue');
+        loadMysteryState();
 
         loadRoomInfo();
         initChannel();

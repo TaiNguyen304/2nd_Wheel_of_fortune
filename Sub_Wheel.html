@@ -664,10 +664,10 @@
             if (animationFrameId) cancelAnimationFrame(animationFrameId);
             isSpinningNow = false;
             currentRotation = 270;
-            wheelGraphic.style.transition = 'transform 0.5s cubic-bezier(0.25, 1, 0.5, 1)';
+            wheelGraphic.style.transition = 'none';
             wheelGraphic.style.transform = 'rotate(270deg)';
             specialValuePopup.style.display = 'none';
-            setTimeout(saveWheelState, 600);
+            saveWheelState();
         }
 
         function executePointerLight(pointerName, state) {

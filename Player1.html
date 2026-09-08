@@ -541,11 +541,33 @@
             dotsRing.appendChild(wrapper);
         }
 
-        function zoomLocal(target) {
+        function zoomLocal(target, skipSave) {
             wheelArea.className = 'wheel-area';
             if (target === 'red') wheelArea.classList.add('zoomed-red');
-            if (target === 'yellow') wheelArea.classList.add('zoomed-yellow');
-            if (target === 'blue') wheelArea.classList.add('zoomed-blue');
+            else if (target === 'yellow') wheelArea.classList.add('zoomed-yellow');
+            else if (target === 'blue') wheelArea.classList.add('zoomed-blue');
+            else target = 'out';
+
+            if (!skipSave) {
+                try {
+                    const storageKey = 'wheel_zoom_' + (roomId || 'default') + '_' + MY_PLAYER;
+                    localStorage.setItem(storageKey, target);
+                } catch (e) {
+                    console.warn("Cannot save zoom state to localStorage:", e);
+                }
+            }
+        }
+
+        function restoreZoomState() {
+            try {
+                const storageKey = 'wheel_zoom_' + (roomId || 'default') + '_' + MY_PLAYER;
+                const savedZoom = localStorage.getItem(storageKey);
+                if (savedZoom) {
+                    zoomLocal(savedZoom, true);
+                }
+            } catch (e) {
+                console.warn("Cannot restore zoom state from localStorage:", e);
+            }
         }
 
         function lockLocalSpin() {
@@ -961,8 +983,9 @@
                     })
                     .on('broadcast', { event: 'reset_rotation' }, function () {
                         if (animationFrameId) cancelAnimationFrame(animationFrameId);
+                        isSpinningNow = false;
                         currentRotation = 270;
-                        wheelGraphic.style.transition = 'transform 0.5s cubic-bezier(0.25, 1, 0.5, 1)';
+                        wheelGraphic.style.transition = 'none';
                         wheelGraphic.style.transform = 'rotate(270deg)';
                         specialValuePopup.style.display = 'none';
                     }).on('broadcast', { event: 'play_sound' }, function (payload) {
@@ -979,6 +1002,7 @@
 
         verifyAndInitChannel();
         loadWheelState();
+        restoreZoomState();
 
         document.addEventListener('contextmenu', e => e.preventDefault());
         document.addEventListener('keydown', e => {

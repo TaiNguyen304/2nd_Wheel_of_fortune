@@ -104,13 +104,15 @@
             background-position: center center;
             background-repeat: no-repeat;
             transform-origin: center center;
-            transition-property: transform;
-            transition-timing-function: cubic-bezier(0.25, 0.1, 0.25, 1);
             box-shadow: none;
             display: block;
             background-image: url('./Nón.png');
             position: relative;
             z-index: 1;
+            will-change: transform;
+            transform: translateZ(0);
+            backface-visibility: hidden;
+            -webkit-backface-visibility: hidden;
         }
 
         #specialValuePopup {
@@ -141,6 +143,8 @@
             width: 100%;
             height: 100%;
             pointer-events: none;
+            will-change: transform;
+            transform: translateZ(0);
         }
 
         .items-ring {
@@ -348,9 +352,17 @@
             text-transform: uppercase;
         }
 
+        #btnSpin:disabled {
+            background: black !important;
+            cursor: not-allowed;
+            opacity: 0.6;
+        }
+
         #btnSpin.enabled {
             background: green;
             color: white;
+            cursor: pointer;
+            opacity: 1;
         }
     </style>
 </head>
@@ -623,60 +635,52 @@
         }
 
         function executeSpin(duration, randomOffset, startTime, startRotFromSource, minRotations) {
-            if (animationFrameId) cancelAnimationFrame(animationFrameId);
+            if (animationFrameId) {
+                cancelAnimationFrame(animationFrameId);
+                animationFrameId = null;
+            }
             if (typeof lockLocalSpin === 'function') lockLocalSpin();
             isSpinningNow = true;
 
             if (wheelGraphic) {
                 wheelGraphic.style.transition = 'none';
-                wheelGraphic.style.transitionProperty = 'none';
-                wheelGraphic.style.transitionDuration = '0s';
             }
 
-            const startRotBase = (startRotFromSource !== undefined && startRotFromSource !== null && !isNaN(startRotFromSource))
+            const rawStart = (startRotFromSource !== undefined && startRotFromSource !== null && !isNaN(startRotFromSource))
                 ? parseFloat(startRotFromSource)
                 : getVisualRotation();
+            const startRot = normalizeAngle(rawStart);
 
-            const spin = computeSpinTarget(startRotBase, duration, randomOffset, minRotations);
-            const startRot = spin.startRot;
+            const spin = computeSpinTarget(startRot, duration, randomOffset, minRotations);
             const targetRot = spin.targetRot;
             const finalDuration = spin.finalDuration;
+            const finalNormalized = normalizeAngle(targetRot);
 
             currentRotation = startRot;
             wheelGraphic.style.transform = `rotate(${startRot}deg)`;
 
-            if (document.getElementById('specialValuePopup')) {
-                document.getElementById('specialValuePopup').style.display = 'none';
+            const popup = document.getElementById('specialValuePopup');
+            if (popup) {
+                popup.style.display = 'none';
             }
 
-            // SỬ DỤNG THỜI GIAN THỰC TẠI CHỖ để loại bỏ hoàn toàn lệch múi giờ hay độ lệch đồng hồ giữa máy tính và điện thoại!
-            const startTimestamp = Date.now();
+            const startTimestamp = performance.now();
             const durationMs = finalDuration * 1000;
 
-            function easeOutQuint(t) {
-                return 1 - Math.pow(1 - t, 5);
-            }
-
-            function updateProgress() {
-                const now = Date.now();
+            function updateProgress(now) {
                 const elapsed = now - startTimestamp;
 
                 if (elapsed >= durationMs) {
-                    currentRotation = targetRot;
-                    wheelGraphic.style.transition = 'none';
-                    wheelGraphic.style.transform = `rotate(${targetRot}deg)`;
+                    currentRotation = finalNormalized;
+                    wheelGraphic.style.transform = `rotate(${finalNormalized}deg)`;
                     animationFrameId = null;
                     isSpinningNow = false;
                 } else {
-                    if (elapsed < 0) {
-                        wheelGraphic.style.transform = `rotate(${startRot}deg)`;
-                    } else {
-                        const t = elapsed / durationMs;
-                        const progress = easeOutQuint(t);
-                        const currentPos = startRot + (targetRot - startRot) * progress;
-                        wheelGraphic.style.transition = 'none';
-                        wheelGraphic.style.transform = `rotate(${currentPos}deg)`;
-                    }
+                    const t = Math.max(0, Math.min(1, elapsed / durationMs));
+                    const progress = 1 - Math.pow(1 - t, 5);
+                    const currentPos = startRot + (targetRot - startRot) * progress;
+
+                    wheelGraphic.style.transform = `rotate(${currentPos}deg)`;
                     animationFrameId = requestAnimationFrame(updateProgress);
                 }
             }
@@ -713,7 +717,7 @@
                 if (wedgeIndexFromSource !== undefined && wedgeIndexFromSource !== null && specialWedges && specialWedges.length > 0) {
                     displayText = formatWedgeValue(specialWedges[wedgeIndexFromSource]);
                 } else {
-                    currentRotation = getVisualRotation();
+                    currentRotation = normalizeAngle(getVisualRotation());
                     displayText = getWedgeValueAtYellowPointer();
                 }
             }
@@ -726,14 +730,18 @@
         }
 
         function executeFindHighest(startTime, targetRotFromSource, targetIndexFromSource, displayTextFromSource) {
-            if (animationFrameId) cancelAnimationFrame(animationFrameId);
-            if (!isSpecialMode || specialWedges.length === 0) return;
+            if (animationFrameId) {
+                cancelAnimationFrame(animationFrameId);
+                animationFrameId = null;
+            }
+            if (!isSpecialMode || !specialWedges || specialWedges.length === 0) return;
 
             const parseVal = (v) => typeof v === 'string' ? parseInt(v.replace(/[^0-9]/g, '')) : v;
             let targetIndex;
             let targetRot;
+            const currentVisual = normalizeAngle(getVisualRotation());
 
-            if (targetRotFromSource !== undefined && targetRotFromSource !== null
+            if (targetRotFromSource !== undefined && targetRotFromSource !== null && !isNaN(targetRotFromSource)
                 && targetIndexFromSource !== undefined && targetIndexFromSource !== null) {
                 targetIndex = targetIndexFromSource;
                 targetRot = targetRotFromSource;
@@ -742,50 +750,41 @@
                 const maxVal = Math.max(...numericValues);
                 targetIndex = numericValues.indexOf(maxVal);
                 const targetCenterAngle = targetIndex * 15;
-                const currentNormalized = normalizeAngle(getVisualRotation());
-                let targetAngleDiff = (360 - targetCenterAngle) - currentNormalized;
+                let targetAngleDiff = (360 - targetCenterAngle) - currentVisual;
                 if (targetAngleDiff <= 0) targetAngleDiff += 360;
-                targetRot = getVisualRotation() + targetAngleDiff + 1080;
+                targetRot = currentVisual + targetAngleDiff + 1080;
             }
 
-            const startRot = getVisualRotation();
-            currentRotation = targetRot;
+            const startRot = currentVisual;
+            const finalNormalized = normalizeAngle(targetRot);
 
-            specialValuePopup.style.display = 'none';
+            if (specialValuePopup) specialValuePopup.style.display = 'none';
 
-            // Sử dụng thời gian thực tế bắt đầu xoay tại chỗ để tránh lệch đồng hồ
-            const startTimestamp = Date.now();
+            const startTimestamp = performance.now();
             const durationMs = 4000;
 
-            function easeOutQuint(t) {
-                return 1 - Math.pow(1 - t, 5);
-            }
-
-            function updateFindHighestProgress() {
-                const now = Date.now();
+            function updateFindHighestProgress(now) {
                 const elapsed = now - startTimestamp;
 
                 if (elapsed >= durationMs) {
-                    wheelGraphic.style.transition = 'none';
-                    wheelGraphic.style.transform = `rotate(${targetRot}deg)`;
+                    currentRotation = finalNormalized;
+                    wheelGraphic.style.transform = `rotate(${finalNormalized}deg)`;
 
                     let realValue = specialWedges[targetIndex];
                     let displayText = displayTextFromSource || (typeof realValue === 'number' ? realValue.toLocaleString('vi-VN') : (realValue || "0"));
-                    specialValuePopup.innerText = displayText;
-                    specialValuePopup.style.display = 'block';
+                    if (specialValuePopup) {
+                        specialValuePopup.innerText = displayText;
+                        specialValuePopup.style.display = 'block';
+                    }
 
                     animationFrameId = null;
+                    isSpinningNow = false;
                 } else {
-                    if (elapsed < 0) {
-                        wheelGraphic.style.transform = `rotate(${startRot}deg)`;
-                    } else {
-                        const t = elapsed / durationMs;
-                        const progress = easeOutQuint(t);
-                        const currentPos = startRot + (targetRot - startRot) * progress;
+                    const t = Math.max(0, Math.min(1, elapsed / durationMs));
+                    const progress = 1 - Math.pow(1 - t, 5);
+                    const currentPos = startRot + (targetRot - startRot) * progress;
 
-                        wheelGraphic.style.transition = 'none';
-                        wheelGraphic.style.transform = `rotate(${currentPos}deg)`;
-                    }
+                    wheelGraphic.style.transform = `rotate(${currentPos}deg)`;
                     animationFrameId = requestAnimationFrame(updateFindHighestProgress);
                 }
             }
@@ -853,12 +852,8 @@
                 });
             }
 
-            // Sync spin buttons
-            if (state.spinButtons) {
-                const myState = state.spinButtons[MY_COLOR];
-                if (myState) unlockLocalSpin();
-                else lockLocalSpin();
-            }
+            // Mặc định luôn khóa nút quay khi F5/Reload/Vào trễ
+            lockLocalSpin();
         }
 
         async function verifyAndInitChannel() {
@@ -982,7 +977,10 @@
                         );
                     })
                     .on('broadcast', { event: 'reset_rotation' }, function () {
-                        if (animationFrameId) cancelAnimationFrame(animationFrameId);
+                        if (animationFrameId) {
+                            cancelAnimationFrame(animationFrameId);
+                            animationFrameId = null;
+                        }
                         isSpinningNow = false;
                         currentRotation = 270;
                         wheelGraphic.style.transition = 'none';
@@ -1000,6 +998,7 @@
             } catch (e) { console.error("Supabase Error:", e); }
         }
 
+        lockLocalSpin();
         verifyAndInitChannel();
         loadWheelState();
         restoreZoomState();

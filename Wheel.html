@@ -419,52 +419,48 @@
         <div class="players-scoreboard">
             <div class="player-row row-red" id="row-red">
                 <div class="score-boxes">
-                    <div class="score-box" id="display-red-round">0</div>
-                    <div class="score-box" id="display-red-total">0</div>
+                    <div class="score-box" id="display-red-round">Vòng: 0</div>
+                    <div class="score-box" id="display-red-total">Tổng: 0</div>
                 </div>
                 <div class="cards-grid">
-                    <div class="cards-grid">
-                        <div class="cards-line">
-                            <div class="card-slot" data-card="0">Cơ Hội</div>
-                            <div class="card-slot" data-card="1">Kháng Mất Điểm</div>
-                            <div class="card-slot" data-card="2">X2</div>
-                        </div>
-                        <div class="cards-line" style="padding: 0 4%;">
-                            <div class="card-slot" data-card="3">100.000</div>
-                            <div class="card-slot" data-card="4">Bảo Vệ</div>
-                            <div class="card-slot" data-card="5">Thẻ Thêm Lượt</div>
-                            <div class="card-slot" data-card="6">Vòng phụ</div>
-                        </div>
+                    <div class="cards-line">
+                        <div class="card-slot" data-card="0">Cơ Hội</div>
+                        <div class="card-slot" data-card="1">Kháng Mất Điểm</div>
+                        <div class="card-slot" data-card="2">X2</div>
+                    </div>
+                    <div class="cards-line" style="padding: 0 4%;">
+                        <div class="card-slot" data-card="3">100.000</div>
+                        <div class="card-slot" data-card="4">Bảo Vệ</div>
+                        <div class="card-slot" data-card="5">Thẻ Thêm Lượt</div>
+                        <div class="card-slot" data-card="6">Vòng phụ</div>
                     </div>
                 </div>
             </div>
 
             <div class="player-row row-yellow" id="row-yellow">
                 <div class="score-boxes">
-                    <div class="score-box" id="display-yellow-round">0</div>
-                    <div class="score-box" id="display-yellow-total">0</div>
+                    <div class="score-box" id="display-yellow-round">Vòng: 0</div>
+                    <div class="score-box" id="display-yellow-total">Tổng: 0</div>
                 </div>
                 <div class="cards-grid">
-                    <div class="cards-grid">
-                        <div class="cards-line">
-                            <div class="card-slot" data-card="0">Cơ Hội</div>
-                            <div class="card-slot" data-card="1">Kháng Mất Điểm</div>
-                            <div class="card-slot" data-card="2">X2</div>
-                        </div>
-                        <div class="cards-line" style="padding: 0 4%;">
-                            <div class="card-slot" data-card="3">100.000</div>
-                            <div class="card-slot" data-card="4">Bảo Vệ</div>
-                            <div class="card-slot" data-card="5">Thẻ Thêm Lượt</div>
-                            <div class="card-slot" data-card="6">Vòng phụ</div>
-                        </div>
+                    <div class="cards-line">
+                        <div class="card-slot" data-card="0">Cơ Hội</div>
+                        <div class="card-slot" data-card="1">Kháng Mất Điểm</div>
+                        <div class="card-slot" data-card="2">X2</div>
+                    </div>
+                    <div class="cards-line" style="padding: 0 4%;">
+                        <div class="card-slot" data-card="3">100.000</div>
+                        <div class="card-slot" data-card="4">Bảo Vệ</div>
+                        <div class="card-slot" data-card="5">Thẻ Thêm Lượt</div>
+                        <div class="card-slot" data-card="6">Vòng phụ</div>
                     </div>
                 </div>
             </div>
 
             <div class="player-row row-blue" id="row-blue">
                 <div class="score-boxes">
-                    <div class="score-box" id="display-blue-round">0</div>
-                    <div class="score-box" id="display-blue-total">0</div>
+                    <div class="score-box" id="display-blue-round">Vòng: 0</div>
+                    <div class="score-box" id="display-blue-total">Tổng: 0</div>
                 </div>
                 <div class="cards-grid">
                     <div class="cards-line">
@@ -1004,12 +1000,27 @@
         }
 
         function executeUpdateScores(scores) {
-            document.getElementById('display-red-round').innerText = scores.redRound.toLocaleString();
-            document.getElementById('display-red-total').innerText = scores.redTotal.toLocaleString();
-            document.getElementById('display-yellow-round').innerText = scores.yellowRound.toLocaleString();
-            document.getElementById('display-yellow-total').innerText = scores.yellowTotal.toLocaleString();
-            document.getElementById('display-blue-round').innerText = scores.blueRound.toLocaleString();
-            document.getElementById('display-blue-total').innerText = scores.blueTotal.toLocaleString();
+            if (!scores) return;
+            const rRound = (scores.redRound !== undefined && scores.redRound !== null) ? scores.redRound.toLocaleString() : '0';
+            const rTotal = (scores.redTotal !== undefined && scores.redTotal !== null) ? scores.redTotal.toLocaleString() : '0';
+            const yRound = (scores.yellowRound !== undefined && scores.yellowRound !== null) ? scores.yellowRound.toLocaleString() : '0';
+            const yTotal = (scores.yellowTotal !== undefined && scores.yellowTotal !== null) ? scores.yellowTotal.toLocaleString() : '0';
+            const bRound = (scores.blueRound !== undefined && scores.blueRound !== null) ? scores.blueRound.toLocaleString() : '0';
+            const bTotal = (scores.blueTotal !== undefined && scores.blueTotal !== null) ? scores.blueTotal.toLocaleString() : '0';
+
+            const elRedRound = document.getElementById('display-red-round');
+            const elRedTotal = document.getElementById('display-red-total');
+            const elYellowRound = document.getElementById('display-yellow-round');
+            const elYellowTotal = document.getElementById('display-yellow-total');
+            const elBlueRound = document.getElementById('display-blue-round');
+            const elBlueTotal = document.getElementById('display-blue-total');
+
+            if (elRedRound) elRedRound.innerText = 'Vòng: ' + rRound;
+            if (elRedTotal) elRedTotal.innerText = 'Tổng: ' + rTotal;
+            if (elYellowRound) elYellowRound.innerText = 'Vòng: ' + yRound;
+            if (elYellowTotal) elYellowTotal.innerText = 'Tổng: ' + yTotal;
+            if (elBlueRound) elBlueRound.innerText = 'Vòng: ' + bRound;
+            if (elBlueTotal) elBlueTotal.innerText = 'Tổng: ' + bTotal;
         }
 
         function executeUpdatePlayerCard(color, cardIdx, isActive) {

@@ -1303,10 +1303,49 @@
             syncScoresToWheel(false);
         });
 
-        // BỔ SUNG: Hàm phát/dừng âm thanh theo phòng
+        // Đồng bộ thời gian để phát âm thanh đồng thời không bị lệch mạng
+        let serverClockOffset = 0;
+        async function syncServerClock() {
+            try {
+                const samples = [];
+                for (let i = 0; i < 3; i++) {
+                    const t0 = performance.now();
+                    const clientNow = Date.now();
+                    const res = await fetch('/api/time?t=' + clientNow, { cache: 'no-store' });
+                    const data = await res.json();
+                    const t1 = performance.now();
+                    const rtt = t1 - t0;
+                    const estimatedServerTime = data.serverTime + (rtt / 2);
+                    samples.push({
+                        offset: estimatedServerTime - (clientNow + (rtt / 2)),
+                        rtt: rtt
+                    });
+                    if (i < 2) await new Promise(r => setTimeout(r, 60));
+                }
+                samples.sort((a, b) => a.rtt - b.rtt);
+                serverClockOffset = samples[0].offset;
+            } catch (e) {
+                console.warn("Clock sync fallback:", e);
+            }
+        }
+        syncServerClock();
+        setInterval(syncServerClock, 60000);
+
+        function getSyncedNow() {
+            return Date.now() + serverClockOffset;
+        }
+
+        // BỔ SUNG: Hàm phát/dừng âm thanh theo phòng (đồng bộ lịch trình chính xác)
         function triggerSound(soundFile) {
             if (!requireRoom()) return;
-            sendEvent('play_sound', { sound: soundFile, timestamp: Date.now() });
+            if (soundFile === 'STOP') {
+                sendEvent('play_sound', { sound: 'STOP', targetTime: 0, timestamp: Date.now() });
+                return;
+            }
+            // Lên lịch trước 350ms để gói tin Supabase kịp truyền đến cả 5 client
+            const SCHEDULE_BUFFER_MS = 350;
+            const targetTime = getSyncedNow() + SCHEDULE_BUFFER_MS;
+            sendEvent('play_sound', { sound: soundFile, targetTime: targetTime, timestamp: targetTime });
         }
         
         function easeTiltSubWheel(direction) {

@@ -332,8 +332,92 @@
             if (typeof saveWheelState === 'function') saveWheelState();
         }
 
-        // BỔ SUNG: Khai báo đối tượng Audio toàn cục
+        // ==================== ĐỒNG BỘ ÂM THANH CHUẨN XÁC GIỮA CÁC MÁY ====================
+        let serverClockOffset = 0;
+        let isClockSynced = false;
+
+        async function syncServerClock() {
+            try {
+                const samples = [];
+                for (let i = 0; i < 3; i++) {
+                    const t0 = performance.now();
+                    const clientNow = Date.now();
+                    const res = await fetch('/api/time?t=' + clientNow, { cache: 'no-store' });
+                    const data = await res.json();
+                    const t1 = performance.now();
+                    const rtt = t1 - t0;
+                    const estimatedServerTime = data.serverTime + (rtt / 2);
+                    samples.push({
+                        offset: estimatedServerTime - (clientNow + (rtt / 2)),
+                        rtt: rtt
+                    });
+                    if (i < 2) await new Promise(r => setTimeout(r, 60));
+                }
+                samples.sort((a, b) => a.rtt - b.rtt);
+                serverClockOffset = samples[0].offset;
+                isClockSynced = true;
+            } catch (e) {
+                console.warn("Time sync error, falling back to local clock:", e);
+            }
+        }
+        syncServerClock();
+        setInterval(syncServerClock, 60000);
+
+        function getSyncedNow() {
+            return Date.now() + serverClockOffset;
+        }
+
+        const ALL_SOUND_FILES = [
+            'intro.mp3',
+            'open.mp3',
+            'toss_up.mp3',
+            'toss_up_solve.mp3',
+            'solve.mp3',
+            'mystery.mp3',
+            'express_1.mp3',
+            'express_2.mp3',
+            'final_spin_bell.mp3',
+            'final_spin.mp3',
+            'speed_up.mp3',
+            'bonus_spin.mp3',
+            'nghia.mp3',
+            '3l.mp3',
+            '10s_suy_nghĩ.mp3',
+            '10s.mp3',
+            'bankrupt.mp3',
+            'bonus_win.mp3',
+            'bonus_lose.mp3',
+            'Closing.mp3'
+        ];
+
         let currentGlobalAudio = null;
+        let scheduledSoundTimer = null;
+        const audioCache = {};
+
+        function preloadAllSounds() {
+            ALL_SOUND_FILES.forEach(function (file) {
+                try {
+                    const audio = new Audio('./' + file);
+                    audio.preload = 'auto';
+                    audio.load();
+                    audioCache[file] = audio;
+                    audioCache['./' + file] = audio;
+                } catch (e) { }
+            });
+        }
+        preloadAllSounds();
+
+        // Mở khóa autoplay âm thanh ngay khi người dùng tương tác với màn hình
+        function unlockAudio() {
+            try {
+                if (currentGlobalAudio) return;
+                const silent = new Audio();
+                silent.play().then(() => silent.pause()).catch(() => {});
+            } catch (e) { }
+        }
+        window.addEventListener('click', unlockAudio, { passive: true, once: true });
+        window.addEventListener('touchstart', unlockAudio, { passive: true, once: true });
+        window.addEventListener('keydown', unlockAudio, { passive: true, once: true });
 
         function getSoundVolume(soundFile) {
             const lowVolumeTracks = [
@@ -348,7 +432,12 @@
             return lowVolumeTracks.includes(fileName) ? 0.3 : 1.0;
         }
 
-        function playSoundEffect(soundFile) {
+        function playSoundEffect(soundFile, targetTime) {
+            if (scheduledSoundTimer) {
+                clearTimeout(scheduledSoundTimer);
+                scheduledSoundTimer = null;
+            }
+
             if (soundFile === 'STOP') {
                 if (currentGlobalAudio) {
                     currentGlobalAudio.pause();
@@ -357,17 +446,62 @@
                 return;
             }
 
+            if (!soundFile) return;
+
             if (currentGlobalAudio) {
                 currentGlobalAudio.pause();
                 currentGlobalAudio.currentTime = 0;
             }
 
-            // Đảm bảo file âm thanh nằm chung thư mục với file HTML
-            currentGlobalAudio = new Audio('./' + soundFile);
-            currentGlobalAudio.volume = getSoundVolume(soundFile);
-            currentGlobalAudio.play().catch(function (error) {
-                console.warn("Chưa tương tác với trang nên chưa thể autoplay sound:", error);
-            });
+            const cleanName = soundFile.replace(/^\.\//, '');
+            let audio = audioCache[cleanName] || audioCache['./' + cleanName];
+            if (!audio) {
+                audio = new Audio('./' + cleanName);
+                audio.preload = 'auto';
+                audioCache[cleanName] = audio;
+            }
+            currentGlobalAudio = audio;
+            currentGlobalAudio.volume = getSoundVolume(cleanName);
+
+            function executePlay(seekOffsetSec) {
+                try {
+                    if (seekOffsetSec > 0 && currentGlobalAudio.duration && seekOffsetSec < currentGlobalAudio.duration) {
+                        currentGlobalAudio.currentTime = seekOffsetSec;
+                    } else {
+                        currentGlobalAudio.currentTime = 0;
+                    }
+                    const p = currentGlobalAudio.play();
+                    if (p !== undefined) {
+                        p.catch(function (error) {
+                            console.warn("Autoplay audio blocked - bấm vào trang để kích hoạt âm thanh:", error);
+                        });
+                    }
+                } catch (err) {
+                    console.error("Audio error:", err);
+                }
+            }
+
+            if (!targetTime) {
+                executePlay(0);
+                return;
+            }
+
+            const now = getSyncedNow();
+            const delayMs = targetTime - now;
+
+            if (delayMs > 0) {
+                // Đợi đúng thời điểm targetTime rồi mới phát đồng loạt trên cả 5 thiết bị
+                scheduledSoundTimer = setTimeout(function () {
+                    scheduledSoundTimer = null;
+                    executePlay(0);
+                }, delayMs);
+            } else {
+                // Nếu gói tin bị trễ qua mạng đến sau targetTime, tua tới đúng vị trí để cùng nhịp
+                const passedSec = (-delayMs) / 1000;
+                if (passedSec < 3.0) {
+                    executePlay(passedSec);
+                }
+            }
         }
 
         let currentRotation = 0;
@@ -824,7 +958,8 @@
                 executeResetRotation();
             }).on('broadcast', { event: 'play_sound' }, function (payload) {
                 if (payload && payload.payload && payload.payload.sound) {
-                    playSoundEffect(payload.payload.sound);
+                    const target = payload.payload.targetTime || payload.payload.timestamp;
+                    playSoundEffect(payload.payload.sound, target);
                 }
             }).subscribe((status) => {
                 if (status === 'SUBSCRIBED') {

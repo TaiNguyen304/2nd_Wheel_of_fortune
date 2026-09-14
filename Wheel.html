@@ -203,7 +203,7 @@
 
         .placed-item.is-wedge img {
             top: 17px;
-            width: 11.9%;
+            width: 12.1%;
             height: 28.7%;
             clip-path: none;
             object-fit: fill;
@@ -670,6 +670,7 @@
         let isSpinningNow = false;
         let activeWheelType = 'normal';
         let pointerLightsState = { red: 'off', yellow: 'off', blue: 'off' };
+        let pointerVisState = { red: true, yellow: true, blue: true };
 
         function normalizeAngle(deg) {
             return ((deg % 360) + 360) % 360;
@@ -803,6 +804,7 @@
                 popupDisplay: specialValuePopup.style.display,
                 popupText: specialValuePopup.innerText,
                 pointerLights: pointerLightsState,
+                pointerVis: pointerVisState,
                 itemsState: {}
             };
             Object.keys(itemsPlacementConfig).forEach(itemName => {
@@ -865,6 +867,13 @@
                 pointerLightsState = Object.assign({}, state.pointerLights);
                 ['red', 'yellow', 'blue'].forEach(pName => {
                     executePointerLight(pName, pointerLightsState[pName]);
+                });
+            }
+
+            if (state.pointerVis) {
+                pointerVisState = Object.assign({}, state.pointerVis);
+                ['red', 'yellow', 'blue'].forEach(pName => {
+                    executePointerVis(pName, pointerVisState[pName]);
                 });
             }
         }
@@ -1023,9 +1032,21 @@
                 if (pointerName === 'red') pointerObj.style.setProperty('--p-color', '#FF0000');
                 if (pointerName === 'yellow') pointerObj.style.setProperty('--p-color', '#FFFF00');
                 if (pointerName === 'blue') pointerObj.style.setProperty('--p-color', '#0000FF');
+            } else if (state === 'cyan') {
+                if (pointerName === 'yellow') pointerObj.style.setProperty('--p-color', '#00ffff');
             } else {
                 pointerObj.style.setProperty('--p-color', '#FFFFFF');
             }
+        }
+
+        function executePointerVis(pointerName, visible) {
+            const pointerObj = document.getElementById('pointer-' + pointerName);
+            if (!pointerObj) return;
+            const wrapper = pointerObj.parentElement;
+            if (wrapper) {
+                wrapper.style.display = (visible === false) ? 'none' : 'block';
+            }
+            pointerVisState[pointerName] = (visible !== false);
         }
 
         function getWedgeValueAtYellowPointer() {
@@ -1171,6 +1192,8 @@
                 executeSpin(payload.payload.duration, payload.payload.randomOffset, undefined, payload.payload.startRot, payload.payload.minRotations);
             }).on('broadcast', { event: 'pointer_light' }, function (payload) {
                 executePointerLight(payload.payload.pointerName, payload.payload.state);
+            }).on('broadcast', { event: 'pointer_vis' }, function (payload) {
+                executePointerVis(payload.payload.pointerName, payload.payload.visible);
             }).on('broadcast', { event: 'zoom_pointer' }, function (payload) {
                 executeZoomPointer(payload.payload.type);
             }).on('broadcast', { event: 'tilt_sub_wheel' }, function (payload) {

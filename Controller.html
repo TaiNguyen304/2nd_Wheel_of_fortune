@@ -355,16 +355,19 @@
                         <span>Kim Đỏ:</span>
                         <button onclick="setPointer('red', 'on')" style="background: green;">Mở</button>
                         <button class="btn-off" onclick="setPointer('red', 'off')">Đóng</button>
+                        <button onclick="togglePointerVis('red')" style="background: #333; color: white;">Ẩn/Hiện</button>
                     </div>
                     <div class="pointer-control" style="background-color: yellow; color: #000;">
                         <span>Kim Vàng:</span>
                         <button onclick="setPointer('yellow', 'on')" style="background: green;">Mở</button>
                         <button class="btn-off" onclick="setPointer('yellow', 'off')">Đóng</button>
+                        <button onclick="setPointer('yellow', 'cyan')" style="background: #00ffff; color: #000;">Chuyển xanh</button>
                     </div>
                     <div class="pointer-control" style="background-color: blue; color: #fff;">
                         <span>Kim Xanh:</span>
                         <button onclick="setPointer('blue', 'on')" style="background: green;">Mở</button>
                         <button class="btn-off" onclick="setPointer('blue', 'off')">Đóng</button>
+                        <button onclick="togglePointerVis('blue')" style="background: #333; color: white;">Ẩn/Hiện</button>
                     </div>
                     <div class="pointer-control" style="background-color: purple; color: #fff;">
                         <span>Zoom Kim:</span>
@@ -547,6 +550,7 @@
         let globalTurns = { red: false, yellow: false, blue: false };
         let globalSpinButtons = { red: false, yellow: false, blue: false };
         let globalPointerLights = { red: 'off', yellow: 'off', blue: 'off' };
+        let globalPointerVis = { red: true, yellow: true, blue: true };
 
         function generateDigits(length) {
             let result = '';
@@ -644,7 +648,8 @@
                     itemsState: {},
                     turns: { red: false, yellow: false, blue: false },
                     spinButtons: { red: false, yellow: false, blue: false },
-                    pointerLights: { red: 'off', yellow: 'off', blue: 'off' }
+                    pointerLights: { red: 'off', yellow: 'off', blue: 'off' },
+                    pointerVis: { red: true, yellow: true, blue: true }
                 },
                 scores: defaultScores,
                 player_cards: defaultCards,
@@ -729,6 +734,9 @@
                 }
                 if (data.wheel_state.pointerLights) {
                     globalPointerLights = Object.assign(globalPointerLights, data.wheel_state.pointerLights);
+                }
+                if (data.wheel_state.pointerVis) {
+                    globalPointerVis = Object.assign(globalPointerVis, data.wheel_state.pointerVis);
                 }
                 if (data.wheel_state.mysteryValues && Array.isArray(data.wheel_state.mysteryValues)) {
                     mysteryValues = data.wheel_state.mysteryValues;
@@ -885,6 +893,13 @@
             sendEvent('pointer_light', { pointerName, state });
             globalPointerLights[pointerName] = state;
             updateWheelStateFields({ pointerLights: globalPointerLights });
+        }
+
+        function togglePointerVis(pointerName) {
+            if (!requireRoom()) return;
+            globalPointerVis[pointerName] = !globalPointerVis[pointerName];
+            sendEvent('pointer_vis', { pointerName, visible: globalPointerVis[pointerName] });
+            updateWheelStateFields({ pointerVis: globalPointerVis });
         }
 
         function zoomPointer(type) {

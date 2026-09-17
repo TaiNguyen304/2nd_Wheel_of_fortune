@@ -776,6 +776,7 @@
 
             if (wheelGraphic) {
                 wheelGraphic.style.transition = 'none';
+                wheelGraphic.style.willChange = 'transform';
             }
 
             const rawStart = (startRotFromSource !== undefined && startRotFromSource !== null && !isNaN(startRotFromSource))
@@ -805,6 +806,7 @@
                 if (elapsed >= durationMs) {
                     currentRotation = finalNormalized;
                     wheelGraphic.style.transform = `rotate(${finalNormalized}deg)`;
+                    wheelGraphic.style.willChange = 'auto';
                     animationFrameId = null;
                     isSpinningNow = false;
                 } else {
@@ -867,6 +869,10 @@
                 animationFrameId = null;
             }
             if (!isSpecialMode || !specialWedges || specialWedges.length === 0) return;
+            isSpinningNow = true;
+            if (wheelGraphic) {
+                wheelGraphic.style.willChange = 'transform';
+            }
 
             const parseVal = (v) => typeof v === 'string' ? parseInt(v.replace(/[^0-9]/g, '')) : v;
             let targetIndex;
@@ -901,6 +907,7 @@
                 if (elapsed >= durationMs) {
                     currentRotation = finalNormalized;
                     wheelGraphic.style.transform = `rotate(${finalNormalized}deg)`;
+                    wheelGraphic.style.willChange = 'auto';
 
                     let realValue = specialWedges[targetIndex];
                     let displayText = displayTextFromSource || (typeof realValue === 'number' ? realValue.toLocaleString('vi-VN') : (realValue || "0"));
@@ -1139,6 +1146,7 @@
                         isSpinningNow = false;
                         currentRotation = 270;
                         wheelGraphic.style.transition = 'none';
+                        wheelGraphic.style.willChange = 'auto';
                         wheelGraphic.style.transform = 'rotate(270deg)';
                         specialValuePopup.style.display = 'none';
                     }).on('broadcast', { event: 'play_sound' }, function (payload) {

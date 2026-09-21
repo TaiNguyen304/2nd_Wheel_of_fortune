@@ -954,7 +954,7 @@
 
         function applyWheelState(state) {
             if (!state) return;
-            currentRotation = state.currentRotation || 0;
+            currentRotation = state.currentRotation !== undefined ? state.currentRotation : 0;
             isSpecialMode = state.isSpecialMode || false;
             specialWedges = state.specialWedges || [];
 
@@ -968,13 +968,17 @@
             specialValuePopup.style.display = state.popupDisplay || 'none';
             specialValuePopup.innerText = state.popupText || '0';
 
-            if (state.itemsState) {
-                Object.keys(state.itemsState).forEach(itemName => {
-                    const targetId = 'render-item-' + itemName.replace(/\s+/g, '_');
-                    const el = document.getElementById(targetId);
-                    if (el) el.style.display = state.itemsState[itemName];
-                });
-            }
+            Object.keys(itemsPlacementConfig).forEach(itemName => {
+                const targetId = 'render-item-' + itemName.replace(/\s+/g, '_');
+                const el = document.getElementById(targetId);
+                if (el) {
+                    if (state.itemsState && (state.itemsState[itemName] === 'block' || state.itemsState[itemName] === true)) {
+                        el.style.display = 'block';
+                    } else {
+                        el.style.display = 'none';
+                    }
+                }
+            });
 
             // Sync pointer lights
             if (state.pointerLights) {
@@ -1137,6 +1141,12 @@
                             payload && payload.payload ? payload.payload.targetIndex : undefined,
                             payload && payload.payload ? payload.payload.displayText : undefined
                         );
+                    }).on('broadcast', { event: 'spin_wheel_sync' }, function (payload) {
+                        if (isSpinningNow) return;
+                        if (animationFrameId) cancelAnimationFrame(animationFrameId);
+                        if (payload && payload.payload) {
+                            applyWheelState(payload.payload);
+                        }
                     }).on('broadcast', { event: 'play_sound' }, function (payload) {
                         if (payload && payload.payload && payload.payload.sound) {
                             const target = payload.payload.targetTime || payload.payload.timestamp;
@@ -1158,6 +1168,7 @@
                     .subscribe((status) => {
                         if (status === 'SUBSCRIBED') {
                             loadWheelState();
+                            channel.send({ event: 'request_sync', type: 'broadcast', payload: {} });
                         }
                     });
             } catch (e) { console.error("Supabase Error:", e); }

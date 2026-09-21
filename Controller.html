@@ -551,6 +551,7 @@
         let globalSpinButtons = { red: false, yellow: false, blue: false };
         let globalPointerLights = { red: 'off', yellow: 'off', blue: 'off' };
         let globalPointerVis = { red: true, yellow: true, blue: true };
+        let globalItemsState = {};
 
         function generateDigits(length) {
             let result = '';
@@ -742,6 +743,12 @@
                     mysteryValues = data.wheel_state.mysteryValues;
                     updateMysteryUI();
                 }
+                if (data.wheel_state.itemsState) {
+                    globalItemsState = Object.assign({}, data.wheel_state.itemsState);
+                    Object.keys(globalItemsState).forEach(itemName => {
+                        updateItemButtonUI(itemName, globalItemsState[itemName] === 'block');
+                    });
+                }
                 if (data.wheel_state.spinMusic !== undefined) {
                     selectedSpinMusic = data.wheel_state.spinMusic;
                     const radios = document.querySelectorAll('input[name="spinMusicOption"]');
@@ -915,9 +922,32 @@
             }
         }
 
-        function toggleItem(itemName, isShow) {
+        function updateItemButtonUI(itemName, isShow) {
+            const card = document.getElementById('item-ctrl-' + itemName.replace(/\s+/g, '_'));
+            if (!card) return;
+            const btnOn = card.querySelector('.btn-item-on');
+            const btnOff = card.querySelector('.btn-item-off');
+            if (btnOn && btnOff) {
+                if (isShow) {
+                    btnOn.style.background = 'green';
+                    btnOn.style.color = 'white';
+                    btnOff.style.background = '#333';
+                    btnOff.style.color = '#ccc';
+                } else {
+                    btnOn.style.background = '#333';
+                    btnOn.style.color = '#ccc';
+                    btnOff.style.background = 'red';
+                    btnOff.style.color = 'white';
+                }
+            }
+        }
+
+        async function toggleItem(itemName, isShow) {
             if (!requireRoom()) return;
+            globalItemsState[itemName] = isShow ? 'block' : 'none';
             sendEvent('toggle_item', { itemName, isShow });
+            updateItemButtonUI(itemName, isShow);
+            await updateWheelStateFields({ itemsState: globalItemsState });
         }
 
         // Thêm hàm xáo và phân bố điểm cho Nón Phụ
@@ -1091,14 +1121,16 @@
             "Thẻ Cơ Hội", "Ô 2.000", "Ô 2.500 1", "Ô 2.500 2", "Ô 2.500 3", "Ô 2.500 4", "Ô 100.000", "Ô Mất điểm"
         ];
         const container = document.getElementById('itemsContainer');
+        container.innerHTML = '';
         itemsList.forEach(function (item) {
             const div = document.createElement('div');
             div.className = 'item-card';
+            div.id = 'item-ctrl-' + item.replace(/\s+/g, '_');
             div.innerHTML = `
                 <div style="margin-bottom: 10px;">${item}</div>
                 <div class="flex-row" style="justify-content: center;">
-                    <button style="padding: 5px 10px; font-size: 12px;" onclick="toggleItem('${item}', true)">Hiện</button>
-                    <button style="padding: 5px 10px; font-size: 12px;" class="btn-off" onclick="toggleItem('${item}', false)">Ẩn</button>
+                    <button class="btn-item-on" style="padding: 5px 10px; font-size: 12px; background: #333; color: #ccc;" onclick="toggleItem('${item}', true)">Hiện</button>
+                    <button class="btn-item-off btn-off" style="padding: 5px 10px; font-size: 12px; background: red; color: white;" onclick="toggleItem('${item}', false)">Ẩn</button>
                 </div>
             `;
             container.appendChild(div);

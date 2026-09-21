@@ -583,25 +583,29 @@
         }
 
         function buildWheelState() {
+            const itemsState = {};
+            Object.keys(itemsPlacementConfig).forEach(itemName => {
+                const targetId = 'render-item-' + itemName.replace(/\s+/g, '_');
+                const el = document.getElementById(targetId);
+                if (el) {
+                    itemsState[itemName] = el.style.display === 'block' ? 'block' : 'none';
+                }
+            });
+
             const state = {
                 currentRotation: currentRotation,
                 isSpecialMode: isSpecialMode,
                 specialWedges: specialWedges,
-                wheelDisplay: wheelGraphic.style.display,
-                wheelBg: wheelGraphic.style.backgroundImage,
+                wheelDisplay: wheelGraphic.style.display || 'block',
+                wheelBg: wheelGraphic.style.backgroundImage || "url('./Nón Phụ.png')",
                 zoomed: wheelArea.classList.contains('zoomed'),
-                subWheelTilt: getSubWheelTiltState(), // BỔ SUNG: Lưu hướng nghiêng vào database
-                popupDisplay: specialValuePopup.style.display,
-                popupText: specialValuePopup.innerText,
+                subWheelTilt: getSubWheelTiltState(),
+                popupDisplay: specialValuePopup.style.display || 'none',
+                popupText: specialValuePopup.innerText || '0',
                 pointerLights: pointerLightsState,
                 pointerVis: pointerVisState,
-                itemsState: {}
+                itemsState: itemsState
             };
-            Object.keys(itemsPlacementConfig).forEach(itemName => {
-                const targetId = 'render-item-' + itemName.replace(/\s+/g, '_');
-                const el = document.getElementById(targetId);
-                if (el) state.itemsState[itemName] = el.style.display;
-            });
             return state;
         }
 
@@ -631,7 +635,7 @@
 
         function applyWheelState(state) {
             if (!state) return;
-            currentRotation = state.currentRotation || 0;
+            currentRotation = state.currentRotation !== undefined ? state.currentRotation : 0;
             isSpecialMode = state.isSpecialMode || false;
             specialWedges = state.specialWedges || [];
 
@@ -642,7 +646,7 @@
             wheelGraphic.style.backgroundPosition = 'center center';
             activeWheelType = inferWheelTypeFromBg(state.wheelBg || wheelGraphic.style.backgroundImage);
 
-            // BỔ SUNG: Khôi phục chính xác góc nghiêng/zoom khi F5 hoặc mở muộn
+            // Khôi phục chính xác góc nghiêng/zoom khi F5 hoặc mở muộn
             wheelArea.classList.remove('zoomed', 'tilt-red', 'tilt-blue');
             if (state.zoomed) {
                 wheelArea.classList.add('zoomed');
@@ -656,13 +660,17 @@
             specialValuePopup.style.display = state.popupDisplay || 'none';
             specialValuePopup.innerText = state.popupText || '0';
 
-            if (state.itemsState) {
-                Object.keys(state.itemsState).forEach(itemName => {
-                    const targetId = 'render-item-' + itemName.replace(/\s+/g, '_');
-                    const el = document.getElementById(targetId);
-                    if (el) el.style.display = state.itemsState[itemName];
-                });
-            }
+            Object.keys(itemsPlacementConfig).forEach(itemName => {
+                const targetId = 'render-item-' + itemName.replace(/\s+/g, '_');
+                const el = document.getElementById(targetId);
+                if (el) {
+                    if (state.itemsState && (state.itemsState[itemName] === 'block' || state.itemsState[itemName] === true)) {
+                        el.style.display = 'block';
+                    } else {
+                        el.style.display = 'none';
+                    }
+                }
+            });
 
             if (state.pointerLights) {
                 pointerLightsState = Object.assign({}, state.pointerLights);
@@ -1001,16 +1009,14 @@
                 channel.send({
                     event: 'spin_wheel_sync',
                     type: 'broadcast',
-                    payload: { rotation: state.currentRotation, isSpecialMode: state.isSpecialMode, wedges: state.specialWedges }
+                    payload: state
                 });
             }).on('broadcast', { event: 'spin_wheel_sync' }, function (payload) {
                 if (isSpinningNow) return;
                 if (animationFrameId) cancelAnimationFrame(animationFrameId);
-                currentRotation = payload.payload.rotation;
-                isSpecialMode = payload.payload.isSpecialMode;
-                specialWedges = payload.payload.wedges;
-                wheelGraphic.style.transition = 'none';
-                wheelGraphic.style.transform = 'rotate(' + currentRotation + 'deg)';
+                if (payload && payload.payload) {
+                    applyWheelState(payload.payload);
+                }
             });
 
             channel.on('broadcast', { event: 'tilt_sub_wheel' }, function (payload) {

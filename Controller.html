@@ -865,6 +865,13 @@
         function toggleWheel(type, isShow) {
             if (!requireRoom()) return;
             sendEvent('toggle_wheel', { type, isShow });
+            const isSpecial = isShow && (type === 'special' || type === 'sub_wheel');
+            updateWheelStateFields({
+                activeWheelType: isShow ? type : 'normal',
+                wheelBg: type === 'special' ? "url('./Nón Đặc Biệt.png')" : (type === 'sub_wheel' ? "url('./Nón Phụ.png')" : "url('./Nón.png')"),
+                wheelDisplay: isShow ? 'block' : 'none',
+                isSpecialMode: isSpecial
+            });
         }
 
         async function spinWheel() {

@@ -963,7 +963,12 @@
             wheelGraphic.style.display = state.wheelDisplay || 'block';
             wheelGraphic.style.backgroundImage = state.wheelBg || "url('./Nón.png')";
             wheelGraphic.style.backgroundPosition = 'center center';
-            activeWheelType = state.wheelBg ? (state.wheelBg.includes('Nón Phụ') ? 'sub_wheel' : (state.wheelBg.includes('Đặc Biệt') ? 'special' : 'normal')) : 'normal';
+            activeWheelType = state.activeWheelType || (state.wheelBg ? (state.wheelBg.includes('Nón Phụ') ? 'sub_wheel' : (state.wheelBg.includes('Đặc Biệt') ? 'special' : 'normal')) : 'normal');
+
+            // Ẩn tất cả các ô thẻ trên Nón Phụ và Nón Đặc Biệt, chỉ hiện trên Nón Thường
+            if (itemsRing) {
+                itemsRing.style.display = (activeWheelType === 'normal') ? 'block' : 'none';
+            }
 
             specialValuePopup.style.display = state.popupDisplay || 'none';
             specialValuePopup.innerText = state.popupText || '0';
@@ -1094,6 +1099,11 @@
                             isSpecialMode = false;
                             activeWheelType = 'normal';
                             specialValuePopup.style.display = 'none';
+                        }
+
+                        // Ẩn tất cả các ô thẻ trên Nón Phụ và Nón Đặc Biệt, chỉ hiện trên Nón Thường
+                        if (itemsRing) {
+                            itemsRing.style.display = (activeWheelType === 'normal') ? 'block' : 'none';
                         }
                     })
                     .on('broadcast', { event: 'pointer_light' }, function (payload) {

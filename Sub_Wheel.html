@@ -598,6 +598,7 @@
                 specialWedges: specialWedges,
                 wheelDisplay: wheelGraphic.style.display || 'block',
                 wheelBg: wheelGraphic.style.backgroundImage || "url('./Nón Phụ.png')",
+                activeWheelType: activeWheelType,
                 zoomed: wheelArea.classList.contains('zoomed'),
                 subWheelTilt: getSubWheelTiltState(),
                 popupDisplay: specialValuePopup.style.display || 'none',
@@ -644,7 +645,12 @@
             wheelGraphic.style.display = state.wheelDisplay || 'block';
             wheelGraphic.style.backgroundImage = state.wheelBg || "url('./Nón Phụ.png')";
             wheelGraphic.style.backgroundPosition = 'center center';
-            activeWheelType = inferWheelTypeFromBg(state.wheelBg || wheelGraphic.style.backgroundImage);
+            activeWheelType = state.activeWheelType || inferWheelTypeFromBg(state.wheelBg || wheelGraphic.style.backgroundImage);
+
+            // Ẩn tất cả các ô thẻ trên Nón Phụ và Nón Đặc Biệt, chỉ hiện trên Nón Thường
+            if (itemsRing) {
+                itemsRing.style.display = (activeWheelType === 'normal') ? 'block' : 'none';
+            }
 
             // Khôi phục chính xác góc nghiêng/zoom khi F5 hoặc mở muộn
             wheelArea.classList.remove('zoomed', 'tilt-red', 'tilt-blue');
@@ -734,6 +740,12 @@
                 activeWheelType = 'normal';
                 specialValuePopup.style.display = 'none';
             }
+
+            // Ẩn tất cả các ô thẻ trên Nón Phụ và Nón Đặc Biệt, chỉ hiện trên Nón Thường
+            if (itemsRing) {
+                itemsRing.style.display = (activeWheelType === 'normal') ? 'block' : 'none';
+            }
+
             saveWheelState();
         }
 

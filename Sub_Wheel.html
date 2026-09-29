@@ -572,15 +572,24 @@
         });
 
         const dotsRing = document.getElementById('dotsRing');
-        for (let i = 0; i < 72; i++) {
-            const wrapper = document.createElement('div');
-            wrapper.className = 'dot-wrapper';
-            wrapper.style.transform = `rotate(${i * 5 - 7.5}deg)`;
-            const dot = document.createElement('div');
-            dot.className = 'dot';
-            wrapper.appendChild(dot);
-            dotsRing.appendChild(wrapper);
+        function updateDotsForWheel(wheelType) {
+            if (!dotsRing) return;
+            dotsRing.innerHTML = '';
+            // Nón Phụ và Nón Đặc Biệt có 48 chấm tròn, các chấm tròn cách nhau 7.5 độ
+            const isSpecialOrSub = (wheelType === 'special' || wheelType === 'sub_wheel');
+            const count = isSpecialOrSub ? 48 : 72;
+            const step = isSpecialOrSub ? 7.5 : 5;
+            for (let i = 0; i < count; i++) {
+                const wrapper = document.createElement('div');
+                wrapper.className = 'dot-wrapper';
+                wrapper.style.transform = `rotate(${i * step - 7.5}deg)`;
+                const dot = document.createElement('div');
+                dot.className = 'dot';
+                wrapper.appendChild(dot);
+                dotsRing.appendChild(wrapper);
+            }
         }
+        updateDotsForWheel(activeWheelType);
 
         function buildWheelState() {
             const itemsState = {};
@@ -646,6 +655,7 @@
             wheelGraphic.style.backgroundImage = state.wheelBg || "url('./Nón Phụ.png')";
             wheelGraphic.style.backgroundPosition = 'center center';
             activeWheelType = state.activeWheelType || inferWheelTypeFromBg(state.wheelBg || wheelGraphic.style.backgroundImage);
+            updateDotsForWheel(activeWheelType);
 
             // Ẩn tất cả các ô thẻ trên Nón Phụ và Nón Đặc Biệt, chỉ hiện trên Nón Thường
             if (itemsRing) {
@@ -746,6 +756,7 @@
                 itemsRing.style.display = (activeWheelType === 'normal') ? 'block' : 'none';
             }
 
+            updateDotsForWheel(activeWheelType);
             saveWheelState();
         }
 

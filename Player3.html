@@ -758,31 +758,87 @@
         let spinEndTimeout = null;
         let activeSpinSession = null;
 
-        document.addEventListener('visibilitychange', function () {
-            if (!document.hidden && activeSpinSession) {
-                const now = Date.now();
-                const elapsed = now - activeSpinSession.startTime;
-                const durationMs = activeSpinSession.finalDuration * 1000;
-                if (elapsed >= durationMs) {
-                    if (spinEndTimeout) {
-                        clearTimeout(spinEndTimeout);
-                        spinEndTimeout = null;
-                    }
-                    wheelGraphic.style.transition = 'none';
-                    wheelGraphic.style.transform = `rotate(${activeSpinSession.finalNormalized}deg)`;
-                    currentRotation = activeSpinSession.finalNormalized;
-                    isSpinningNow = false;
+        function cubicBezier(x1, y1, x2, y2) {
+            const cx = 3 * x1;
+            const bx = 3 * (x2 - x1) - cx;
+            const ax = 1 - cx - bx;
+            const cy = 3 * y1;
+            const by = 3 * (y2 - y1) - cy;
+            const ay = 1 - cy - by;
 
-                    if (activeSpinSession.type === 'find_highest') {
-                        let realValue = specialWedges[activeSpinSession.targetIndex];
-                        let displayText = activeSpinSession.displayText || (typeof realValue === 'number' ? realValue.toLocaleString('vi-VN') : (realValue || "0"));
-                        if (specialValuePopup) {
-                            specialValuePopup.innerText = displayText;
-                            specialValuePopup.style.display = 'block';
-                        }
-                    }
-                    activeSpinSession = null;
+            function sampleX(t) { return ((ax * t + bx) * t + cx) * t; }
+            function sampleY(t) { return ((ay * t + by) * t + cy) * t; }
+            function sampleDerivX(t) { return (3 * ax * t + 2 * bx) * t + cx; }
+
+            return function solve(x) {
+                if (x <= 0) return 0;
+                if (x >= 1) return 1;
+                let t = x;
+                for (let i = 0; i < 8; i++) {
+                    const xEst = sampleX(t) - x;
+                    if (Math.abs(xEst) < 1e-4) return sampleY(t);
+                    const d = sampleDerivX(t);
+                    if (Math.abs(d) < 1e-5) break;
+                    t -= xEst / d;
                 }
+                let t0 = 0, t1 = 1;
+                t = x;
+                while (t0 < t1) {
+                    const xEst = sampleX(t);
+                    if (Math.abs(xEst - x) < 1e-4) return sampleY(t);
+                    if (x > xEst) t0 = t;
+                    else t1 = t;
+                    t = (t1 + t0) / 2;
+                }
+                return sampleY(t);
+            };
+        }
+
+        const easeSpinProgress = cubicBezier(0.2, 0.8, 0.2, 1.0);
+
+        function handleVisibilityCatchup() {
+            if (!activeSpinSession) return;
+            const now = Date.now();
+            const elapsed = now - activeSpinSession.startTime;
+            const durationMs = activeSpinSession.finalDuration * 1000;
+
+            if (elapsed >= durationMs) {
+                if (spinEndTimeout) {
+                    clearTimeout(spinEndTimeout);
+                    spinEndTimeout = null;
+                }
+                wheelGraphic.style.transition = 'none';
+                wheelGraphic.style.transform = `rotate(${activeSpinSession.finalNormalized}deg)`;
+                currentRotation = activeSpinSession.finalNormalized;
+                isSpinningNow = false;
+
+                if (activeSpinSession.type === 'find_highest') {
+                    let realValue = specialWedges[activeSpinSession.targetIndex];
+                    let displayText = activeSpinSession.displayText || (typeof realValue === 'number' ? realValue.toLocaleString('vi-VN') : (realValue || "0"));
+                    if (specialValuePopup) {
+                        specialValuePopup.innerText = displayText;
+                        specialValuePopup.style.display = 'block';
+                    }
+                }
+                activeSpinSession = null;
+            } else if (elapsed > 0) {
+                const t = Math.max(0, Math.min(1, elapsed / durationMs));
+                const progress = easeSpinProgress(t);
+                const currentPos = activeSpinSession.startRot + (activeSpinSession.targetRot - activeSpinSession.startRot) * progress;
+                const remainingSec = Math.max(0.05, (durationMs - elapsed) / 1000);
+
+                wheelGraphic.style.transition = 'none';
+                wheelGraphic.style.transform = `rotate(${currentPos}deg)`;
+                void wheelGraphic.offsetHeight;
+
+                wheelGraphic.style.transition = `transform ${remainingSec}s cubic-bezier(0, 0, 0.2, 1)`;
+                wheelGraphic.style.transform = `rotate(${activeSpinSession.targetRot}deg)`;
+            }
+        }
+
+        document.addEventListener('visibilitychange', function () {
+            if (!document.hidden) {
+                handleVisibilityCatchup();
             }
         });
 
@@ -803,6 +859,7 @@
             const targetRot = spin.targetRot;
             const finalDuration = spin.finalDuration;
             const finalNormalized = normalizeAngle(targetRot);
+            const spinStartTime = (startTime && !isNaN(startTime) && startTime > 0) ? parseFloat(startTime) : Date.now();
 
             const popup = document.getElementById('specialValuePopup');
             if (popup) {
@@ -811,26 +868,33 @@
 
             activeSpinSession = {
                 type: 'spin',
-                startTime: Date.now(),
+                startTime: spinStartTime,
                 startRot: startRot,
                 targetRot: targetRot,
                 finalNormalized: finalNormalized,
                 finalDuration: finalDuration
             };
 
-            wheelGraphic.style.transition = 'none';
-            wheelGraphic.style.transform = `rotate(${startRot}deg)`;
-            void wheelGraphic.offsetHeight;
+            // Nếu tab không bị ẩn, kích hoạt transition bình thường
+            // Nếu tab đang bị ẩn (background tab), KHÔNG kích hoạt CSS transition ngay vì trình duyệt sẽ pause và chỉ bắt đầu chạy khi mở tab
+            if (!document.hidden) {
+                wheelGraphic.style.transition = 'none';
+                wheelGraphic.style.transform = `rotate(${startRot}deg)`;
+                void wheelGraphic.offsetHeight;
 
-            wheelGraphic.style.transition = `transform ${finalDuration}s cubic-bezier(0.2, 0.8, 0.2, 1)`;
-            wheelGraphic.style.transform = `rotate(${targetRot}deg)`;
+                wheelGraphic.style.transition = `transform ${finalDuration}s cubic-bezier(0.2, 0.8, 0.2, 1)`;
+                wheelGraphic.style.transform = `rotate(${targetRot}deg)`;
+            }
 
+            const remainingTimeoutMs = Math.max(50, (spinStartTime + finalDuration * 1000 + 50) - Date.now());
             spinEndTimeout = setTimeout(function () {
+                wheelGraphic.style.transition = 'none';
+                wheelGraphic.style.transform = `rotate(${finalNormalized}deg)`;
                 currentRotation = finalNormalized;
                 isSpinningNow = false;
                 activeSpinSession = null;
                 spinEndTimeout = null;
-            }, finalDuration * 1000 + 50);
+            }, remainingTimeoutMs);
         }
 
         function updateIndicator(color, isActive) {
@@ -910,10 +974,11 @@
             const durationSec = 4.0;
             let realValue = specialWedges[targetIndex];
             let displayText = displayTextFromSource || (typeof realValue === 'number' ? realValue.toLocaleString('vi-VN') : (realValue || "0"));
+            const spinStartTime = (startTime && !isNaN(startTime) && startTime > 0) ? parseFloat(startTime) : Date.now();
 
             activeSpinSession = {
                 type: 'find_highest',
-                startTime: Date.now(),
+                startTime: spinStartTime,
                 startRot: startRot,
                 targetRot: targetRot,
                 finalNormalized: finalNormalized,
@@ -922,13 +987,16 @@
                 displayText: displayText
             };
 
-            wheelGraphic.style.transition = 'none';
-            wheelGraphic.style.transform = `rotate(${startRot}deg)`;
-            void wheelGraphic.offsetHeight;
+            if (!document.hidden) {
+                wheelGraphic.style.transition = 'none';
+                wheelGraphic.style.transform = `rotate(${startRot}deg)`;
+                void wheelGraphic.offsetHeight;
 
-            wheelGraphic.style.transition = `transform ${durationSec}s cubic-bezier(0.18, 0.9, 0.28, 1)`;
-            wheelGraphic.style.transform = `rotate(${targetRot}deg)`;
+                wheelGraphic.style.transition = `transform ${durationSec}s cubic-bezier(0.2, 0.8, 0.2, 1)`;
+                wheelGraphic.style.transform = `rotate(${targetRot}deg)`;
+            }
 
+            const remainingTimeoutMs = Math.max(50, (spinStartTime + durationSec * 1000 + 50) - Date.now());
             spinEndTimeout = setTimeout(function () {
                 currentRotation = finalNormalized;
                 wheelGraphic.style.transition = 'none';
@@ -942,7 +1010,7 @@
                 isSpinningNow = false;
                 activeSpinSession = null;
                 spinEndTimeout = null;
-            }, durationSec * 1000 + 40);
+            }, remainingTimeoutMs);
         }
 
         function executePointerVis(pointerName, visible) {
@@ -1061,7 +1129,7 @@
                     executeSpin(
                         payload.payload.duration,
                         payload.payload.randomOffset,
-                        undefined, // ignore startTime to use local clock on this device
+                        payload.payload.startTime,
                         payload.payload.startRot,
                         payload.payload.minRotations
                     );

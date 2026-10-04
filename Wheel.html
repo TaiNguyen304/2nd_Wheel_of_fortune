@@ -979,8 +979,59 @@
             return { startRot: start, targetRot: start + totalExtra, finalDuration: finalDuration };
         }
 
-        // BIẾN TOÀN CỤC PHỤ TRÁCH THỰC HIỆN ĐỒNG BỘ MƯỢT MÀ
+        // BIẾN TOÀN CỤC PHỤ TRÁCH THỰC HIỆN ĐỒNG BỘ MƯỢT MÀ VÀ ĐỒNG BỘ TAB NỀN
         let spinEndTimeout = null;
+        let activeSpinSession = null;
+
+        function handleVisibilityCatchup() {
+            if (!activeSpinSession) return;
+            const now = Date.now();
+            const elapsed = now - activeSpinSession.startTime;
+            const durationMs = activeSpinSession.finalDuration * 1000;
+
+            if (elapsed >= durationMs) {
+                if (spinEndTimeout) {
+                    clearTimeout(spinEndTimeout);
+                    spinEndTimeout = null;
+                }
+                wheelGraphic.style.transition = 'none';
+                wheelGraphic.style.transform = `rotate(${activeSpinSession.finalNormalized}deg)`;
+                currentRotation = activeSpinSession.finalNormalized;
+                isSpinningNow = false;
+
+                if (activeSpinSession.type === 'find_highest') {
+                    let realValue = specialWedges[activeSpinSession.targetIndex];
+                    let displayText = activeSpinSession.displayText || (typeof realValue === 'number' ? realValue.toLocaleString('vi-VN') : (realValue || "0"));
+                    if (specialValuePopup) {
+                        specialValuePopup.innerText = displayText;
+                        specialValuePopup.style.display = 'block';
+                    }
+                }
+                activeSpinSession = null;
+                if (typeof saveWheelState === 'function') saveWheelState();
+            } else if (elapsed > 0) {
+                const t = elapsed / durationMs;
+                const progress = 1 - Math.pow(1 - t, 3.5);
+                const currentPos = activeSpinSession.startRot + (activeSpinSession.targetRot - activeSpinSession.startRot) * progress;
+                const remainingSec = Math.max(0.1, (durationMs - elapsed) / 1000);
+
+                wheelGraphic.style.transition = 'none';
+                wheelGraphic.style.transform = `rotate(${currentPos}deg)`;
+                void wheelGraphic.offsetHeight;
+
+                wheelGraphic.style.transition = `transform ${remainingSec}s cubic-bezier(0.05, 0.8, 0.2, 1)`;
+                wheelGraphic.style.transform = `rotate(${activeSpinSession.targetRot}deg)`;
+            }
+        }
+
+        document.addEventListener('visibilitychange', function () {
+            if (!document.hidden) {
+                handleVisibilityCatchup();
+            }
+        });
+        window.addEventListener('focus', function () {
+            handleVisibilityCatchup();
+        });
 
         function executeSpin(duration, randomOffset, startTime, startRotFromSource, minRotations) {
             if (spinEndTimeout) {
@@ -1004,6 +1055,15 @@
                 popup.style.display = 'none';
             }
 
+            activeSpinSession = {
+                type: 'spin',
+                startTime: Date.now(),
+                startRot: startRot,
+                targetRot: targetRot,
+                finalNormalized: finalNormalized,
+                finalDuration: finalDuration
+            };
+
             // Đặt vị trí xuất phát chính xác và reset transition
             wheelGraphic.style.transition = 'none';
             wheelGraphic.style.transform = `rotate(${startRot}deg)`;
@@ -1020,6 +1080,7 @@
                 wheelGraphic.style.transform = `rotate(${finalNormalized}deg)`;
                 currentRotation = finalNormalized;
                 isSpinningNow = false;
+                activeSpinSession = null;
                 spinEndTimeout = null;
                 if (typeof saveWheelState === 'function') saveWheelState();
             }, finalDuration * 1000 + 40);
@@ -1030,15 +1091,13 @@
                 clearTimeout(spinEndTimeout);
                 spinEndTimeout = null;
             }
+            activeSpinSession = null;
             isSpinningNow = false;
             currentRotation = 270;
             wheelGraphic.style.transition = 'none';
             wheelGraphic.style.transform = 'rotate(270deg)';
-            specialValuePopup.style.display = 'none';
-            saveWheelState();
-        }
-            specialValuePopup.style.display = 'none';
-            saveWheelState();
+            if (specialValuePopup) specialValuePopup.style.display = 'none';
+            if (typeof saveWheelState === 'function') saveWheelState();
         }
 
         function executePointerLight(pointerName, state) {
@@ -1101,15 +1160,12 @@
         }
 
         function executeFindHighest(startTime, targetRotFromSource, targetIndexFromSource, displayTextFromSource) {
-            if (animationFrameId) {
-                cancelAnimationFrame(animationFrameId);
-                animationFrameId = null;
+            if (spinEndTimeout) {
+                clearTimeout(spinEndTimeout);
+                spinEndTimeout = null;
             }
             if (!isSpecialMode || !specialWedges || specialWedges.length === 0) return;
             isSpinningNow = true;
-            if (wheelGraphic) {
-                wheelGraphic.style.willChange = 'transform';
-            }
 
             const parseVal = (v) => typeof v === 'string' ? parseInt(v.replace(/[^0-9]/g, '')) : v;
             let targetIndex;
@@ -1135,38 +1191,43 @@
 
             if (specialValuePopup) specialValuePopup.style.display = 'none';
 
-            const startTimestamp = performance.now();
-            const durationMs = 4000;
+            const durationSec = 4.0;
+            let realValue = specialWedges[targetIndex];
+            let displayText = displayTextFromSource || (typeof realValue === 'number' ? realValue.toLocaleString('vi-VN') : (realValue || "0"));
 
-            function updateFindHighestProgress(now) {
-                const elapsed = now - startTimestamp;
+            activeSpinSession = {
+                type: 'find_highest',
+                startTime: Date.now(),
+                startRot: startRot,
+                targetRot: targetRot,
+                finalNormalized: finalNormalized,
+                finalDuration: durationSec,
+                targetIndex: targetIndex,
+                displayText: displayText
+            };
 
-                if (elapsed >= durationMs) {
-                    currentRotation = finalNormalized;
-                    wheelGraphic.style.transform = `rotate(${finalNormalized}deg)`;
-                    wheelGraphic.style.willChange = 'auto';
+            wheelGraphic.style.transition = 'none';
+            wheelGraphic.style.transform = `rotate(${startRot}deg)`;
+            void wheelGraphic.offsetHeight;
 
-                    let realValue = specialWedges[targetIndex];
-                    let displayText = displayTextFromSource || (typeof realValue === 'number' ? realValue.toLocaleString('vi-VN') : (realValue || "0"));
-                    if (specialValuePopup) {
-                        specialValuePopup.innerText = displayText;
-                        specialValuePopup.style.display = 'block';
-                    }
+            wheelGraphic.style.transition = `transform ${durationSec}s cubic-bezier(0.18, 0.9, 0.28, 1)`;
+            wheelGraphic.style.transform = `rotate(${targetRot}deg)`;
 
-                    saveWheelState();
-                    animationFrameId = null;
-                    isSpinningNow = false;
-                } else {
-                    const t = Math.max(0, Math.min(1, elapsed / durationMs));
-                    const progress = 1 - Math.pow(1 - t, 5);
-                    const currentPos = startRot + (targetRot - startRot) * progress;
+            spinEndTimeout = setTimeout(function () {
+                currentRotation = finalNormalized;
+                wheelGraphic.style.transition = 'none';
+                wheelGraphic.style.transform = `rotate(${finalNormalized}deg)`;
 
-                    wheelGraphic.style.transform = `rotate(${currentPos}deg)`;
-                    animationFrameId = requestAnimationFrame(updateFindHighestProgress);
+                if (specialValuePopup) {
+                    specialValuePopup.innerText = displayText;
+                    specialValuePopup.style.display = 'block';
                 }
-            }
 
-            animationFrameId = requestAnimationFrame(updateFindHighestProgress);
+                saveWheelState();
+                isSpinningNow = false;
+                activeSpinSession = null;
+                spinEndTimeout = null;
+            }, durationSec * 1000 + 40);
         }
 
         function executeUpdateScores(scores) {

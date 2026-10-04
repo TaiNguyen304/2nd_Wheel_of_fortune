@@ -754,6 +754,57 @@
         }
 
         let spinEndTimeout = null;
+        let activeSpinSession = null;
+
+        function handleVisibilityCatchup() {
+            if (!activeSpinSession) return;
+            const now = Date.now();
+            const elapsed = now - activeSpinSession.startTime;
+            const durationMs = activeSpinSession.finalDuration * 1000;
+
+            if (elapsed >= durationMs) {
+                if (spinEndTimeout) {
+                    clearTimeout(spinEndTimeout);
+                    spinEndTimeout = null;
+                }
+                wheelGraphic.style.transition = 'none';
+                wheelGraphic.style.transform = `rotate(${activeSpinSession.finalNormalized}deg)`;
+                currentRotation = activeSpinSession.finalNormalized;
+                isSpinningNow = false;
+
+                if (activeSpinSession.type === 'find_highest') {
+                    let realValue = specialWedges[activeSpinSession.targetIndex];
+                    let displayText = activeSpinSession.displayText || (typeof realValue === 'number' ? realValue.toLocaleString('vi-VN') : (realValue || "0"));
+                    if (specialValuePopup) {
+                        specialValuePopup.innerText = displayText;
+                        specialValuePopup.style.display = 'block';
+                    }
+                }
+                activeSpinSession = null;
+                if (typeof saveWheelState === 'function') saveWheelState();
+            } else if (elapsed > 0) {
+                const t = elapsed / durationMs;
+                const progress = 1 - Math.pow(1 - t, 3.5);
+                const currentPos = activeSpinSession.startRot + (activeSpinSession.targetRot - activeSpinSession.startRot) * progress;
+                const remainingSec = Math.max(0.1, (durationMs - elapsed) / 1000);
+
+                wheelGraphic.style.transition = 'none';
+                wheelGraphic.style.transform = `rotate(${currentPos}deg)`;
+                void wheelGraphic.offsetHeight;
+
+                wheelGraphic.style.transition = `transform ${remainingSec}s cubic-bezier(0.05, 0.8, 0.2, 1)`;
+                wheelGraphic.style.transform = `rotate(${activeSpinSession.targetRot}deg)`;
+            }
+        }
+
+        document.addEventListener('visibilitychange', function () {
+            if (!document.hidden) {
+                handleVisibilityCatchup();
+            }
+        });
+        window.addEventListener('focus', function () {
+            handleVisibilityCatchup();
+        });
 
         function executeSpin(duration, randomOffset, startTime, startRotFromSource, minRotations) {
             if (spinEndTimeout) {
@@ -777,6 +828,15 @@
                 popup.style.display = 'none';
             }
 
+            activeSpinSession = {
+                type: 'spin',
+                startTime: Date.now(),
+                startRot: startRot,
+                targetRot: targetRot,
+                finalNormalized: finalNormalized,
+                finalDuration: finalDuration
+            };
+
             // Đặt vị trí xuất phát chính xác và reset transition
             wheelGraphic.style.transition = 'none';
             wheelGraphic.style.transform = `rotate(${startRot}deg)`;
@@ -793,6 +853,7 @@
                 wheelGraphic.style.transform = `rotate(${finalNormalized}deg)`;
                 currentRotation = finalNormalized;
                 isSpinningNow = false;
+                activeSpinSession = null;
                 spinEndTimeout = null;
                 if (typeof saveWheelState === 'function') saveWheelState();
             }, finalDuration * 1000 + 40);
@@ -803,12 +864,13 @@
                 clearTimeout(spinEndTimeout);
                 spinEndTimeout = null;
             }
+            activeSpinSession = null;
             isSpinningNow = false;
             currentRotation = 270;
             wheelGraphic.style.transition = 'none';
             wheelGraphic.style.transform = 'rotate(270deg)';
-            specialValuePopup.style.display = 'none';
-            saveWheelState();
+            if (specialValuePopup) specialValuePopup.style.display = 'none';
+            if (typeof saveWheelState === 'function') saveWheelState();
         }
 
         function executePointerLight(pointerName, state) {
@@ -902,6 +964,19 @@
             if (specialValuePopup) specialValuePopup.style.display = 'none';
 
             const durationSec = 4.0;
+            let realValue = specialWedges[targetIndex];
+            let displayText = displayTextFromSource || (typeof realValue === 'number' ? realValue.toLocaleString('vi-VN') : (realValue || "0"));
+
+            activeSpinSession = {
+                type: 'find_highest',
+                startTime: Date.now(),
+                startRot: startRot,
+                targetRot: targetRot,
+                finalNormalized: finalNormalized,
+                finalDuration: durationSec,
+                targetIndex: targetIndex,
+                displayText: displayText
+            };
 
             wheelGraphic.style.transition = 'none';
             wheelGraphic.style.transform = `rotate(${startRot}deg)`;
@@ -915,8 +990,6 @@
                 wheelGraphic.style.transition = 'none';
                 wheelGraphic.style.transform = `rotate(${finalNormalized}deg)`;
 
-                let realValue = specialWedges[targetIndex];
-                let displayText = displayTextFromSource || (typeof realValue === 'number' ? realValue.toLocaleString('vi-VN') : (realValue || "0"));
                 if (specialValuePopup) {
                     specialValuePopup.innerText = displayText;
                     specialValuePopup.style.display = 'block';
@@ -924,6 +997,7 @@
 
                 saveWheelState();
                 isSpinningNow = false;
+                activeSpinSession = null;
                 spinEndTimeout = null;
             }, durationSec * 1000 + 40);
         }

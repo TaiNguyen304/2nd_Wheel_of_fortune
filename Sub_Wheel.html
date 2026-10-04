@@ -857,7 +857,7 @@
             const targetRot = spin.targetRot;
             const finalDuration = spin.finalDuration;
             const finalNormalized = normalizeAngle(targetRot);
-            const spinStartTime = (startTime && !isNaN(startTime) && startTime > 0) ? parseFloat(startTime) : Date.now();
+            const spinStartTime = Date.now();
 
             const popup = document.getElementById('specialValuePopup');
             if (popup) {
@@ -884,7 +884,7 @@
                 wheelGraphic.style.transform = `rotate(${targetRot}deg)`;
             }
 
-            const remainingTimeoutMs = Math.max(50, (spinStartTime + finalDuration * 1000 + 50) - Date.now());
+            const remainingTimeoutMs = Math.round(finalDuration * 1000 + 50);
             spinEndTimeout = setTimeout(function () {
                 wheelGraphic.style.transition = 'none';
                 wheelGraphic.style.transform = `rotate(${finalNormalized}deg)`;
@@ -1003,7 +1003,7 @@
             const durationSec = 4.0;
             let realValue = specialWedges[targetIndex];
             let displayText = displayTextFromSource || (typeof realValue === 'number' ? realValue.toLocaleString('vi-VN') : (realValue || "0"));
-            const spinStartTime = (startTime && !isNaN(startTime) && startTime > 0) ? parseFloat(startTime) : Date.now();
+            const spinStartTime = Date.now();
 
             activeSpinSession = {
                 type: 'find_highest',
@@ -1025,7 +1025,7 @@
                 wheelGraphic.style.transform = `rotate(${targetRot}deg)`;
             }
 
-            const remainingTimeoutMs = Math.max(50, (spinStartTime + durationSec * 1000 + 50) - Date.now());
+            const remainingTimeoutMs = Math.round(durationSec * 1000 + 50);
             spinEndTimeout = setTimeout(function () {
                 currentRotation = finalNormalized;
                 wheelGraphic.style.transition = 'none';

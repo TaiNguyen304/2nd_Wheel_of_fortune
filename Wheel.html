@@ -138,12 +138,7 @@
             background-image: url('./Nón.png');
             position: relative;
             z-index: 1;
-            image-rendering: -webkit-optimize-contrast;
-            image-rendering: high-quality;
-            will-change: transform;
-            backface-visibility: hidden;
-            -webkit-backface-visibility: hidden;
-            transform: translateZ(0);
+            image-rendering: auto;
         }
 
         #specialValuePopup {
@@ -1172,12 +1167,15 @@
         }
 
         function executeFindHighest(startTime, targetRotFromSource, targetIndexFromSource, displayTextFromSource) {
-            if (spinEndTimeout) {
-                clearTimeout(spinEndTimeout);
-                spinEndTimeout = null;
+            if (animationFrameId) {
+                cancelAnimationFrame(animationFrameId);
+                animationFrameId = null;
             }
             if (!isSpecialMode || !specialWedges || specialWedges.length === 0) return;
             isSpinningNow = true;
+            if (wheelGraphic) {
+                wheelGraphic.style.willChange = 'transform';
+            }
 
             const parseVal = (v) => typeof v === 'string' ? parseInt(v.replace(/[^0-9]/g, '')) : v;
             let targetIndex;
@@ -1203,31 +1201,38 @@
 
             if (specialValuePopup) specialValuePopup.style.display = 'none';
 
-            const durationSec = 4.0;
+            const startTimestamp = performance.now();
+            const durationMs = 4000;
 
-            wheelGraphic.style.transition = 'none';
-            wheelGraphic.style.transform = `rotate(${startRot}deg)`;
-            void wheelGraphic.offsetHeight;
+            function updateFindHighestProgress(now) {
+                const elapsed = now - startTimestamp;
 
-            wheelGraphic.style.transition = `transform ${durationSec}s cubic-bezier(0.18, 0.9, 0.28, 1)`;
-            wheelGraphic.style.transform = `rotate(${targetRot}deg)`;
+                if (elapsed >= durationMs) {
+                    currentRotation = finalNormalized;
+                    wheelGraphic.style.transform = `rotate(${finalNormalized}deg)`;
+                    wheelGraphic.style.willChange = 'auto';
 
-            spinEndTimeout = setTimeout(function () {
-                currentRotation = finalNormalized;
-                wheelGraphic.style.transition = 'none';
-                wheelGraphic.style.transform = `rotate(${finalNormalized}deg)`;
+                    let realValue = specialWedges[targetIndex];
+                    let displayText = displayTextFromSource || (typeof realValue === 'number' ? realValue.toLocaleString('vi-VN') : (realValue || "0"));
+                    if (specialValuePopup) {
+                        specialValuePopup.innerText = displayText;
+                        specialValuePopup.style.display = 'block';
+                    }
 
-                let realValue = specialWedges[targetIndex];
-                let displayText = displayTextFromSource || (typeof realValue === 'number' ? realValue.toLocaleString('vi-VN') : (realValue || "0"));
-                if (specialValuePopup) {
-                    specialValuePopup.innerText = displayText;
-                    specialValuePopup.style.display = 'block';
+                    saveWheelState();
+                    animationFrameId = null;
+                    isSpinningNow = false;
+                } else {
+                    const t = Math.max(0, Math.min(1, elapsed / durationMs));
+                    const progress = 1 - Math.pow(1 - t, 5);
+                    const currentPos = startRot + (targetRot - startRot) * progress;
+
+                    wheelGraphic.style.transform = `rotate(${currentPos}deg)`;
+                    animationFrameId = requestAnimationFrame(updateFindHighestProgress);
                 }
+            }
 
-                saveWheelState();
-                isSpinningNow = false;
-                spinEndTimeout = null;
-            }, durationSec * 1000 + 40);
+            animationFrameId = requestAnimationFrame(updateFindHighestProgress);
         }
 
         function executeUpdateScores(scores) {

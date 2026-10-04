@@ -339,20 +339,56 @@
                 for (let i = 0; i < 3; i++) {
                     const t0 = performance.now();
                     const clientNow = Date.now();
-                    const res = await fetch('/api/time?t=' + clientNow, { cache: 'no-store' });
-                    const data = await res.json();
-                    const t1 = performance.now();
-                    const rtt = t1 - t0;
-                    const estimatedServerTime = data.serverTime + (rtt / 2);
-                    samples.push({
-                        offset: estimatedServerTime - (clientNow + (rtt / 2)),
-                        rtt: rtt
-                    });
+                    let estimatedServerTime = null;
+
+                    // 1. Thử lấy từ endpoint server nếu có
+                    try {
+                        const res = await fetch('/api/time?t=' + clientNow, { cache: 'no-store' });
+                        if (res.ok) {
+                            const data = await res.json();
+                            if (data && typeof data.serverTime === 'number') {
+                                const t1 = performance.now();
+                                const rtt = t1 - t0;
+                                estimatedServerTime = data.serverTime + (rtt / 2);
+                                samples.push({
+                                    offset: estimatedServerTime - (clientNow + (rtt / 2)),
+                                    rtt: rtt
+                                });
+                            }
+                        }
+                    } catch (err) {}
+
+                    // 2. Nếu không có /api/time (chạy trên GitHub Pages hoặc thuần Supabase), lấy thời gian từ server Supabase
+                    if (estimatedServerTime === null && typeof supabaseUrl !== 'undefined' && typeof supabaseKey !== 'undefined') {
+                        try {
+                            const t0Supa = performance.now();
+                            const clientNowSupa = Date.now();
+                            const res = await fetch(supabaseUrl + '/rest/v1/', {
+                                method: 'HEAD',
+                                headers: { 'apikey': supabaseKey },
+                                cache: 'no-store'
+                            });
+                            const dateHeader = res.headers.get('date');
+                            if (dateHeader) {
+                                const serverTime = new Date(dateHeader).getTime();
+                                const t1Supa = performance.now();
+                                const rtt = t1Supa - t0Supa;
+                                estimatedServerTime = serverTime + (rtt / 2);
+                                samples.push({
+                                    offset: estimatedServerTime - (clientNowSupa + (rtt / 2)),
+                                    rtt: rtt
+                                });
+                            }
+                        } catch (errSupa) {}
+                    }
+
                     if (i < 2) await new Promise(r => setTimeout(r, 60));
                 }
-                samples.sort((a, b) => a.rtt - b.rtt);
-                serverClockOffset = samples[0].offset;
-                isClockSynced = true;
+                if (samples.length > 0) {
+                    samples.sort((a, b) => a.rtt - b.rtt);
+                    serverClockOffset = samples[0].offset;
+                    isClockSynced = true;
+                }
             } catch (e) {
                 console.warn("Time sync error, falling back to local clock:", e);
             }

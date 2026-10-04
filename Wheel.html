@@ -1303,7 +1303,11 @@
                 });
             }).on('broadcast', { event: 'spin_wheel_sync' }, function (payload) {
                 if (isSpinningNow) return;
-                if (animationFrameId) cancelAnimationFrame(animationFrameId);
+                if (spinEndTimeout) {
+                    clearTimeout(spinEndTimeout);
+                    spinEndTimeout = null;
+                }
+                activeSpinSession = null;
                 if (payload && payload.payload) {
                     applyWheelState(payload.payload);
                 }

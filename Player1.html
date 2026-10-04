@@ -589,7 +589,6 @@
         let currentRotation = 0;
         let isSpecialMode = false;
         let specialWedges = [];
-        let animationFrameId = null;
         let isSpinningNow = false;
         let activeWheelType = 'normal';
 
@@ -1170,19 +1169,23 @@
                         );
                     })
                     .on('broadcast', { event: 'reset_rotation' }, function () {
-                        if (animationFrameId) {
-                            cancelAnimationFrame(animationFrameId);
-                            animationFrameId = null;
+                        if (spinEndTimeout) {
+                            clearTimeout(spinEndTimeout);
+                            spinEndTimeout = null;
                         }
+                        activeSpinSession = null;
                         isSpinningNow = false;
                         currentRotation = 270;
                         wheelGraphic.style.transition = 'none';
-                        wheelGraphic.style.willChange = 'auto';
                         wheelGraphic.style.transform = 'rotate(270deg)';
                         specialValuePopup.style.display = 'none';
                     }).on('broadcast', { event: 'spin_wheel_sync' }, function (payload) {
                         if (isSpinningNow) return;
-                        if (animationFrameId) cancelAnimationFrame(animationFrameId);
+                        if (spinEndTimeout) {
+                            clearTimeout(spinEndTimeout);
+                            spinEndTimeout = null;
+                        }
+                        activeSpinSession = null;
                         if (payload && payload.payload) {
                             applyWheelState(payload.payload);
                         }

@@ -15,88 +15,89 @@
 
         body {
             margin: 0;
-            padding: 10px;
+            padding: 6px;
             background-color: #f0f2f5;
             height: 100vh;
             overflow-x: auto;
-            overflow-y: hidden;
+            overflow-y: auto;
         }
 
         .controller-4col-container {
             display: grid;
-            grid-template-columns: repeat(4, minmax(320px, 1fr));
-            gap: 12px;
-            height: calc(100vh - 20px);
-            min-width: 1300px;
+            grid-template-columns: repeat(4, minmax(260px, 1fr));
+            gap: 6px;
+            height: calc(100vh - 12px);
+            min-height: 0;
+            min-width: 1080px;
         }
 
         .controller-col {
             display: flex;
             flex-direction: column;
-            gap: 12px;
+            gap: 6px;
             height: 100%;
             overflow-y: auto;
             overflow-x: hidden;
-            padding-right: 4px;
+            padding-right: 2px;
         }
 
         .controller-col::-webkit-scrollbar {
-            width: 6px;
+            width: 4px;
         }
 
         .controller-col::-webkit-scrollbar-thumb {
             background: #bbb;
-            border-radius: 3px;
+            border-radius: 2px;
         }
 
         .section {
             background: white;
-            padding: 12px;
-            border-radius: 8px;
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            padding: 6px 7px;
+            border-radius: 5px;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
         }
 
         .section h2 {
             margin-top: 0;
-            margin-bottom: 10px;
-            font-size: 16px;
+            margin-bottom: 4px;
+            font-size: 12.5px;
         }
 
         .grid-pointer {
             display: grid;
-            grid-template-columns: 1fr;
-            gap: 8px;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 4px;
         }
 
         .grid-4 {
             display: grid;
             grid-template-columns: repeat(2, 1fr);
-            gap: 8px;
+            gap: 4px;
         }
 
         .grid-6x4 {
             display: grid;
             grid-template-columns: repeat(4, 1fr);
-            gap: 6px;
-            margin-top: 10px;
+            gap: 3px;
+            margin-top: 4px;
         }
 
         .flex-row {
             display: flex;
-            gap: 8px;
+            gap: 4px;
             align-items: center;
             flex-wrap: wrap;
         }
 
         button {
-            padding: 8px 12px;
+            padding: 4px 6px;
             border: none;
-            border-radius: 5px;
+            border-radius: 4px;
             cursor: pointer;
             background: purple;
             color: white;
             transition: 0.2s;
-            font-size: 13px;
+            font-size: 11px;
         }
 
         button:hover {
@@ -116,70 +117,80 @@
 
         input[type="number"],
         input[type="text"] {
-            padding: 8px;
+            padding: 3px 5px;
             border: 1px solid #ccc;
-            border-radius: 5px;
-            width: 120px;
-            font-size: 13px;
+            border-radius: 4px;
+            width: 85px;
+            font-size: 11.5px;
+            background: #fff;
+            color: #000;
         }
 
         .item-card {
             border: 1px solid #ddd;
-            padding: 8px;
-            border-radius: 5px;
+            padding: 3px;
+            border-radius: 4px;
             text-align: center;
-            font-size: 12px;
+            font-size: 10.5px;
         }
 
         .pointer-control {
             display: flex;
             align-items: center;
-            gap: 6px;
-            padding: 8px;
-            border: 1px solid #eee;
-            border-radius: 5px;
-            font-size: 12px;
+            gap: 3px;
+            padding: 3px 4px;
+            border: 1px solid rgba(0, 0, 0, 0.15);
+            border-radius: 4px;
+            font-size: 10.5px;
+            flex-wrap: wrap;
+        }
+
+        .pointer-control button {
+            padding: 2px 4px;
+            font-size: 10px;
         }
 
         .wedge-cell {
-            padding: 8px 4px;
+            padding: 3px 1px;
             text-align: center;
-            border-radius: 4px;
+            border-radius: 3px;
             border: 1px solid #ccc;
-            font-size: 11px;
-            line-height: 1.2;
+            font-size: 9.5px;
+            line-height: 1.1;
         }
 
         /* THIẾT KẾ ĐIỀU KHIỂN NGƯỜI CHƠI */
         .player-control-block {
             border: 2px solid #ccc;
-            padding: 10px;
-            margin-top: 8px;
-            border-radius: 6px;
+            padding: 4px 6px;
+            margin-top: 4px;
+            border-radius: 5px;
         }
 
         .block-red {
-            border-color: red;
+            border-color: #ff0000;
+            background: #ffffff;
         }
 
         .block-yellow {
-            border-color: yellow;
-            background: black;
+            border-color: #ffff00;
+            background: #000000;
         }
 
         .block-blue {
-            border-color: blue;
+            border-color: #0000ff;
+            background: #ffffff;
         }
 
         .score-display-row {
             display: flex;
-            gap: 8px;
-            margin-bottom: 10px;
+            gap: 4px;
+            margin-bottom: 4px;
         }
 
         .score-info-box {
-            padding: 8px 12px;
-            font-size: 14px;
+            padding: 3px 6px;
+            font-size: 11.5px;
             border-radius: 4px;
             color: white;
             flex: 1;
@@ -187,8 +198,8 @@
         }
 
         .btn-card-toggle {
-            padding: 5px 8px;
-            font-size: 11px;
+            padding: 2px 4px;
+            font-size: 10px;
             background: #333;
             border: 1px solid #fff;
         }
@@ -200,19 +211,20 @@
 
         .soundboard-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(105px, 1fr));
-            gap: 6px;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 3px;
         }
 
         .sound-btn {
-            padding: 8px 6px;
+            padding: 4px 2px;
             border: none;
-            border-radius: 5px;
+            border-radius: 4px;
             cursor: pointer;
             background: purple;
             color: white;
             font-weight: bold;
-            font-size: 12px;
+            font-size: 10px;
+            line-height: 1.1;
             transition: 0.2s;
         }
 
@@ -252,53 +264,49 @@
 
             <!-- MỤC BÍ MẬT -->
             <div class="section">
-                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
-                    <h2 style="margin: 0;">Bí mật</h2>
-                    <button onclick="randomMysteryValues()" style="background: #ffff00; color: #000000; padding: 5px 12px; font-size: 13px; border-radius: 4px; border: 1px solid #cca300; cursor: pointer; font-weight: bold; transition: 0.2s;" onmouseover="this.style.background='#ffea00'" onmouseout="this.style.background='#ffff00'">Random</button>
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 5px;">
+                    <h2 style="margin: 0; font-size: 12.5px;">Bí mật</h2>
+                    <button onclick="randomMysteryValues()" style="background: #ffff00; color: #000000; padding: 3px 8px; font-size: 11px; border-radius: 4px; border: 1px solid #cca300; cursor: pointer; font-weight: bold; transition: 0.2s;" onmouseover="this.style.background='#ffea00'" onmouseout="this.style.background='#ffff00'">Random</button>
                 </div>
-                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px;">
-                    <!-- Hàng 1: 2 ô 2.500 BM 600, 900 BM 300 -->
-                    <div style="background: #1e293b; color: #facc15; padding: 10px 4px; text-align: center; border-radius: 5px; font-weight: bold; font-size: 13px; border: 1px solid #eab308; box-shadow: inset 0 0 5px rgba(0,0,0,0.5);">
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 5px;">
+                    <div style="background: #1e293b; color: #facc15; padding: 6px 2px; text-align: center; border-radius: 4px; font-weight: bold; font-size: 11px; border: 1px solid #eab308;">
                         2.500 BM 600
                     </div>
-                    <div style="background: #1e293b; color: #facc15; padding: 10px 4px; text-align: center; border-radius: 5px; font-weight: bold; font-size: 13px; border: 1px solid #eab308; box-shadow: inset 0 0 5px rgba(0,0,0,0.5);">
+                    <div style="background: #1e293b; color: #facc15; padding: 6px 2px; text-align: center; border-radius: 4px; font-weight: bold; font-size: 11px; border: 1px solid #eab308;">
                         900 BM 300
                     </div>
 
-                    <!-- Hàng 2: Giá trị của 2 ô này (1 là x2, 1 là Mất điểm) -->
-                    <div id="mystery-val-1" onclick="toggleMysteryTile(0)" style="cursor: pointer; background: #008000; color: white; padding: 10px 4px; text-align: center; border-radius: 5px; font-weight: bold; font-size: 14px; border: 2px solid white; user-select: none; transition: 0.2s; box-shadow: 0 2px 4px rgba(0,0,0,0.3);" title="Nhấp để đổi giá trị">
+                    <div id="mystery-val-1" onclick="toggleMysteryTile(0)" style="cursor: pointer; background: #008000; color: white; padding: 6px 2px; text-align: center; border-radius: 4px; font-weight: bold; font-size: 12px; border: 2px solid white; user-select: none; transition: 0.2s;" title="Nhấp để đổi giá trị">
                         x2
                     </div>
-                    <div id="mystery-val-2" onclick="toggleMysteryTile(1)" style="cursor: pointer; background: #ff0000; color: white; padding: 10px 4px; text-align: center; border-radius: 5px; font-weight: bold; font-size: 14px; border: 2px solid white; user-select: none; transition: 0.2s; box-shadow: 0 2px 4px rgba(0,0,0,0.3);" title="Nhấp để đổi giá trị">
+                    <div id="mystery-val-2" onclick="toggleMysteryTile(1)" style="cursor: pointer; background: #ff0000; color: white; padding: 6px 2px; text-align: center; border-radius: 4px; font-weight: bold; font-size: 12px; border: 2px solid white; user-select: none; transition: 0.2s;" title="Nhấp để đổi giá trị">
                         Mất điểm
                     </div>
                 </div>
-                <div style="display: flex; gap: 6px; margin-top: 8px;">
-                    <button onclick="toggleMysteryHidden()" id="btnMysteryHidden" style="flex: 1; background: #334155; color: white; padding: 5px; font-size: 11px; border: 1px solid #64748b; border-radius: 4px; cursor: pointer;">Ẩn / Hiện</button>
-                    <button onclick="swapMysteryValues()" style="flex: 1; background: #334155; color: white; padding: 5px; font-size: 11px; border: 1px solid #64748b; border-radius: 4px; cursor: pointer;">Đổi Chỗ</button>
+                <div style="display: flex; gap: 5px; margin-top: 5px;">
+                    <button onclick="toggleMysteryHidden()" id="btnMysteryHidden" style="flex: 1; background: #334155; color: white; padding: 3px; font-size: 10.5px; border: 1px solid #64748b; border-radius: 4px; cursor: pointer;">Ẩn / Hiện</button>
+                    <button onclick="swapMysteryValues()" style="flex: 1; background: #334155; color: white; padding: 3px; font-size: 10.5px; border: 1px solid #64748b; border-radius: 4px; cursor: pointer;">Đổi Chỗ</button>
                 </div>
             </div>
 
             <!-- CẤU HÌNH NHẠC QUAY NÓN -->
             <div class="section">
-                <h2>Cấu hình nhạc quay Nón</h2>
-                <div style="display: flex; flex-direction: column; gap: 8px; font-size: 13px;">
-                    <label style="display: flex; align-items: center; gap: 6px; cursor: pointer; user-select: none;">
+                <h2 style="margin-bottom: 4px;">Cấu hình nhạc quay Nón</h2>
+                <div style="display: flex; flex-wrap: wrap; align-items: center; gap: 6px; font-size: 11px;">
+                    <label style="display: flex; align-items: center; gap: 3px; cursor: pointer; user-select: none;">
                         <input type="radio" name="spinMusicOption" value="Spin.mp3"> Spin
                     </label>
-                    <label style="display: flex; align-items: center; gap: 6px; cursor: pointer; user-select: none;">
-                        <input type="radio" name="spinMusicOption" value="final_spin.mp3"> Final Spin
+                    <label style="display: flex; align-items: center; gap: 3px; cursor: pointer; user-select: none;">
+                        <input type="radio" name="spinMusicOption" value="final_spin.mp3"> Final
                     </label>
-                    <label style="display: flex; align-items: center; gap: 6px; cursor: pointer; user-select: none;">
-                        <input type="radio" name="spinMusicOption" value="bonus_spin.mp3"> Bonus Spin
+                    <label style="display: flex; align-items: center; gap: 3px; cursor: pointer; user-select: none;">
+                        <input type="radio" name="spinMusicOption" value="bonus_spin.mp3"> Bonus
                     </label>
-                    <label style="display: flex; align-items: center; gap: 6px; cursor: pointer; user-select: none;">
+                    <label style="display: flex; align-items: center; gap: 3px; cursor: pointer; user-select: none;">
                         <input type="radio" name="spinMusicOption" value="none" checked> None
                     </label>
-                    <div style="margin-top: 4px; display: flex; align-items: center; gap: 8px;">
-                        <button onclick="setSpinMusic()" style="background: #008000; color: #ffffff; padding: 6px 14px; border: none; border-radius: 4px; font-weight: bold; cursor: pointer;">Set</button>
-                        <span id="spinMusicStatus" style="font-size: 12px; color: #008000; font-weight: bold;"></span>
-                    </div>
+                    <button onclick="setSpinMusic()" style="background: #008000; color: #ffffff; padding: 3px 8px; border: none; border-radius: 4px; font-weight: bold; cursor: pointer;">Set</button>
+                    <span id="spinMusicStatus" style="font-size: 10.5px; color: #008000; font-weight: bold;"></span>
                 </div>
             </div>
 
@@ -336,6 +344,24 @@
 
         <!-- CỘT 2: ĐIỀU KHIỂN NÓN & ĐÈN KIM & LƯỢT / NÚT QUAY -->
         <div class="controller-col">
+            <div class="section">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+                    <h2 style="margin: 0; font-size: 15px;">Điều khiển Background</h2>
+                    <span id="bgCirclesStatus" style="font-size: 13px; font-weight: bold; color: #000000;">(Background 1)</span>
+                </div>
+                <div class="flex-row" style="margin-bottom: 6px; flex-wrap: wrap; gap: 6px;">
+                    <button onclick="setBgMode('bg1', 'none')" style="background: #ff0000; color: #ffffff; font-weight: bold;">Background 1</button>
+                    <button onclick="setBgMode('bg2', 'none')" style="background: #ffff00; color: #000000; font-weight: bold;">Background 2</button>
+                    <button onclick="setBgMode('bg3', 'none')" style="background: #0000ff; color: #ffffff; font-weight: bold;">Background 3</button>
+                    <button class="btn-off" onclick="toggleBgVisible(false)">Ẩn Background</button>
+                </div>
+                <div class="flex-row" style="flex-wrap: wrap; gap: 6px;">
+                    <button onclick="setBgMode('bg2', 'effect1')" style="background: #008000; color: #ffffff; font-weight: bold;">Hiệu ứng 1</button>
+                    <button onclick="setBgMode('bg3', 'effect2')" style="background: #800080; color: #ffffff; font-weight: bold;">Hiệu ứng 2</button>
+                    <button onclick="stopBgEffect()" style="background: #475569; color: #ffffff; font-weight: bold;">Dừng hiệu ứng</button>
+                </div>
+            </div>
+
             <div class="section">
                 <h2>Điều khiển Nón</h2>
                 <div class="flex-row">
@@ -376,18 +402,18 @@
                         <button onclick="togglePointerVis('blue')" style="background: #333; color: white;">Ẩn/Hiện</button>
                     </div>
                     <div class="pointer-control" style="background-color: purple; color: #fff;">
-                        <span>Zoom Kim:</span>
-                        <button onclick="easeTiltSubWheel('red')" style="background: red; color: white;">Ease in Đỏ</button>
-                        <button onclick="zoomPointer('in')" style="background: yellow; color: black;">Ease in Vàng</button>
-                        <button onclick="easeTiltSubWheel('blue')" style="background: blue; color: white;">Ease in Xanh</button>
-                        <button onclick="zoomPointer('out')" style="background: #ff00ff; color: black;">Ease out</button>
+                        <span>Zoom:</span>
+                        <button onclick="easeTiltSubWheel('red')" style="background: red; color: white; padding: 2px 4px;">Đỏ</button>
+                        <button onclick="zoomPointer('in')" style="background: yellow; color: black; padding: 2px 4px;">Vàng</button>
+                        <button onclick="easeTiltSubWheel('blue')" style="background: blue; color: white; padding: 2px 4px;">Xanh</button>
+                        <button onclick="zoomPointer('out')" style="background: #ff00ff; color: black; padding: 2px 4px;">Out</button>
                     </div>
                 </div>
             </div>
 
             <div class="section">
                 <h2>Điều khiển Lượt & Nút Quay Người Chơi</h2>
-                <div class="grid-pointer" style="margin-bottom: 10px;">
+                <div class="grid-pointer" style="margin-bottom: 4px;">
                     <div class="pointer-control" style="background-color: red; color: #fff;">
                         <span>Lượt Đỏ:</span>
                         <button onclick="setTurn('red', true)" style="background: green;">Set</button>
@@ -444,21 +470,21 @@
                     <button onclick="findHighestWedge()" style="background: red; color: white;">Tìm ô cao nhất</button>
                     <button onclick="hideValue()" style="background: yellow; color: #000;">Ẩn giá trị</button>
                 </div>
-                <h3 style="margin-top: 10px; margin-bottom: 5px; font-size: 13px;">Sơ đồ 24 ô Nón Phụ</h3>
+                <h3 style="margin-top: 6px; margin-bottom: 3px; font-size: 11.5px;">Sơ đồ 24 ô Nón Phụ</h3>
                 <div class="grid-6x4" id="subGridContainer"></div>
             </div>
 
             <div class="section">
                 <h2>Điều khiển Nón Đặc Biệt</h2>
                 <div class="flex-row">
-                    <label style="font-size: 12px;"><input type="radio" name="specialPrize" value="50000" checked> 50.000đ</label>
-                    <label style="font-size: 12px;"><input type="radio" name="specialPrize" value="100000"> 100.000đ</label>
-                    <button onclick="shuffleSpecialWheel()" style="background: blue; color: white;">Xáo giá trị</button>
-                    <button onclick="showValue()" style="background: green; color: white;">Hiện giá trị</button>
-                    <button onclick="findHighestWedge()" style="background: red; color: white;">Tìm ô cao nhất</button>
-                    <button onclick="hideValue()" style="background: yellow; color: #000;">Ẩn giá trị</button>
+                    <label style="font-size: 11px;"><input type="radio" name="specialPrize" value="50000" checked> 50.000đ</label>
+                    <label style="font-size: 11px;"><input type="radio" name="specialPrize" value="100000"> 100.000đ</label>
+                    <button onclick="shuffleSpecialWheel()" style="background: blue; color: white;">Xáo</button>
+                    <button onclick="showValue()" style="background: green; color: white;">Hiện</button>
+                    <button onclick="findHighestWedge()" style="background: red; color: white;">Tìm cao nhất</button>
+                    <button onclick="hideValue()" style="background: yellow; color: #000;">Ẩn</button>
                 </div>
-                <h3 style="margin-top: 10px; margin-bottom: 5px; font-size: 13px;">Sơ đồ 24 ô Nón Đặc Biệt</h3>
+                <h3 style="margin-top: 6px; margin-bottom: 3px; font-size: 11.5px;">Sơ đồ 24 ô Nón Đặc Biệt</h3>
                 <div class="grid-6x4" id="specialGridContainer"></div>
             </div>
 
@@ -473,17 +499,22 @@
             <div class="section">
                 <h2>Bảng Điều Khiển Người Chơi</h2>
 
-                <div class="player-control-block block-red">
-                    <h3 style="color: red; margin-top: 0; font-size: 14px;">NC ĐỎ</h3>
+                <div class="player-control-block block-red" style="background: #ffffff;">
+                    <h3 style="color: #ff0000; margin-top: 0; margin-bottom: 3px; font-size: 13.5px;">NC ĐỎ</h3>
                     <div class="score-display-row">
                         <div class="score-info-box" id="ctrl-red-round-box" style="background: red;">Điểm Vòng: 0</div>
                         <div class="score-info-box" id="ctrl-red-total-box" style="background: red;">Điểm Tổng: 0</div>
                     </div>
-                    <div class="flex-row" style="margin-bottom: 8px;">
-                        <input type="text" id="score-input-red" placeholder="Nhập số điểm" oninput="formatNumberInput(this)">
+                    <div class="flex-row" style="margin-bottom: 4px; flex-wrap: wrap; gap: 4px;">
+                        <input type="text" id="score-input-red" placeholder="Nhập điểm" oninput="formatNumberInput(this)" style="width: 78px;">
+                        <span style="font-size: 13px; font-weight: bold; align-self: center; color: #000000;">x</span>
+                        <input type="number" id="freq-input-red" value="1" min="1" placeholder="Tần số" title="Tần số (hệ số nhân)" style="width: 42px; text-align: center;">
                         <button onclick="modifyScore('red', 'total', 'add')" style="background: blue; color: white;">Tổng +</button>
                         <button onclick="modifyScore('red', 'round', 'add')" style="background: yellow; color: black;">Vòng +</button>
                         <button onclick="modifyScore('red', 'round', 'sub')" style="background: red; color: white;">Vòng -</button>
+                        <button onclick="addRoundToTotal('red')" style="background: #008000; color: white; font-weight: bold;">+Vòng vào tổng</button>
+                    </div>
+                    <div class="flex-row" style="margin-bottom: 4px; flex-wrap: wrap; gap: 4px;">
                         <button onclick="multiplyRoundScore('red', 1.5)" style="background: #800080; color: white; font-weight: bold;">x1.5</button>
                         <button onclick="multiplyRoundScore('red', 2)" style="background: #800080; color: white; font-weight: bold;">x2</button>
                         <button onclick="divideRoundScore('red', 2)" style="background: #800080; color: white; font-weight: bold;">:2</button>
@@ -493,17 +524,22 @@
                     <div class="flex-row" id="cards-row-red"></div>
                 </div>
 
-                <div class="player-control-block block-yellow" style="background: black;">
-                    <h3 style="color: yellow; margin-top: 0; font-size: 14px;">NC VÀNG</h3>
+                <div class="player-control-block block-yellow" style="background: #000000;">
+                    <h3 style="color: #ffff00; margin-top: 0; margin-bottom: 3px; font-size: 13.5px;">NC VÀNG</h3>
                     <div class="score-display-row">
                         <div class="score-info-box" id="ctrl-yellow-round-box" style="background: yellow; color: #000;">Điểm Vòng: 0</div>
                         <div class="score-info-box" id="ctrl-yellow-total-box" style="background: yellow; color: #000;">Điểm Tổng: 0</div>
                     </div>
-                    <div class="flex-row" style="margin-bottom: 8px;">
-                        <input type="text" id="score-input-yellow" placeholder="Nhập số điểm" oninput="formatNumberInput(this)">
+                    <div class="flex-row" style="margin-bottom: 4px; flex-wrap: wrap; gap: 4px;">
+                        <input type="text" id="score-input-yellow" placeholder="Nhập điểm" oninput="formatNumberInput(this)" style="width: 78px;">
+                        <span style="font-size: 13px; font-weight: bold; align-self: center; color: #ffffff;">x</span>
+                        <input type="number" id="freq-input-yellow" value="1" min="1" placeholder="Tần số" title="Tần số (hệ số nhân)" style="width: 42px; text-align: center;">
                         <button onclick="modifyScore('yellow', 'total', 'add')" style="background: blue; color: white;">Tổng +</button>
                         <button onclick="modifyScore('yellow', 'round', 'add')" style="background: yellow; color: black;">Vòng +</button>
                         <button onclick="modifyScore('yellow', 'round', 'sub')" style="background: red; color: white;">Vòng -</button>
+                        <button onclick="addRoundToTotal('yellow')" style="background: #008000; color: white; font-weight: bold;">+Vòng vào tổng</button>
+                    </div>
+                    <div class="flex-row" style="margin-bottom: 4px; flex-wrap: wrap; gap: 4px;">
                         <button onclick="multiplyRoundScore('yellow', 1.5)" style="background: #800080; color: white; font-weight: bold;">x1.5</button>
                         <button onclick="multiplyRoundScore('yellow', 2)" style="background: #800080; color: white; font-weight: bold;">x2</button>
                         <button onclick="divideRoundScore('yellow', 2)" style="background: #800080; color: white; font-weight: bold;">:2</button>
@@ -513,17 +549,22 @@
                     <div class="flex-row" id="cards-row-yellow"></div>
                 </div>
 
-                <div class="player-control-block block-blue">
-                    <h3 style="color: blue; margin-top: 0; font-size: 14px;">NC XANH</h3>
+                <div class="player-control-block block-blue" style="background: #ffffff;">
+                    <h3 style="color: #0000ff; margin-top: 0; margin-bottom: 3px; font-size: 13.5px;">NC XANH</h3>
                     <div class="score-display-row">
                         <div class="score-info-box" id="ctrl-blue-round-box" style="background: blue;">Điểm Vòng: 0</div>
                         <div class="score-info-box" id="ctrl-blue-total-box" style="background: blue;">Điểm Tổng: 0</div>
                     </div>
-                    <div class="flex-row" style="margin-bottom: 8px;">
-                        <input type="text" id="score-input-blue" placeholder="Nhập số điểm" oninput="formatNumberInput(this)">
+                    <div class="flex-row" style="margin-bottom: 4px; flex-wrap: wrap; gap: 4px;">
+                        <input type="text" id="score-input-blue" placeholder="Nhập điểm" oninput="formatNumberInput(this)" style="width: 78px;">
+                        <span style="font-size: 13px; font-weight: bold; align-self: center; color: #000000;">x</span>
+                        <input type="number" id="freq-input-blue" value="1" min="1" placeholder="Tần số" title="Tần số (hệ số nhân)" style="width: 42px; text-align: center;">
                         <button onclick="modifyScore('blue', 'total', 'add')" style="background: blue; color: white;">Tổng +</button>
                         <button onclick="modifyScore('blue', 'round', 'add')" style="background: yellow; color: black;">Vòng +</button>
                         <button onclick="modifyScore('blue', 'round', 'sub')" style="background: red; color: white;">Vòng -</button>
+                        <button onclick="addRoundToTotal('blue')" style="background: #008000; color: white; font-weight: bold;">+Vòng vào tổng</button>
+                    </div>
+                    <div class="flex-row" style="margin-bottom: 4px; flex-wrap: wrap; gap: 4px;">
                         <button onclick="multiplyRoundScore('blue', 1.5)" style="background: #800080; color: white; font-weight: bold;">x1.5</button>
                         <button onclick="multiplyRoundScore('blue', 2)" style="background: #800080; color: white; font-weight: bold;">x2</button>
                         <button onclick="divideRoundScore('blue', 2)" style="background: #800080; color: white; font-weight: bold;">:2</button>
@@ -534,11 +575,11 @@
                 </div>
 
                 <div class="flex-row"
-                    style="margin-top: 15px; border-top: 2px dashed #ccc; padding-top: 10px; justify-content: center;">
+                    style="margin-top: 8px; border-top: 2px dashed #ccc; padding-top: 6px; justify-content: center;">
                     <button onclick="resetAllScores('round')"
-                        style="background: purple; font-size: 13px; padding: 10px 15px;">Reset điểm vòng</button>
+                        style="background: purple; font-size: 11.5px; padding: 5px 10px;">Reset điểm vòng</button>
                     <button onclick="resetAllScores('total')"
-                        style="background: #ff00ff; color: black; font-size: 13px; padding: 10px 15px;">Reset điểm tổng</button>
+                        style="background: #ff00ff; color: black; font-size: 11.5px; padding: 5px 10px;">Reset điểm tổng</button>
                 </div>
             </div>
         </div>
@@ -557,6 +598,10 @@
         let globalSpinButtons = { red: false, yellow: false, blue: false };
         let globalPointerLights = { red: 'off', yellow: 'off', blue: 'off' };
         let globalPointerVis = { red: true, yellow: true, blue: true };
+        let globalBgType = 'bg1';
+        let globalBgEffect = 'none';
+        let globalBgVisible = true;
+        let globalBgCirclesVis = true;
         let globalItemsState = {};
 
         function generateDigits(length) {
@@ -656,7 +701,11 @@
                     turns: { red: false, yellow: false, blue: false },
                     spinButtons: { red: false, yellow: false, blue: false },
                     pointerLights: { red: 'off', yellow: 'off', blue: 'off' },
-                    pointerVis: { red: true, yellow: true, blue: true }
+                    pointerVis: { red: true, yellow: true, blue: true },
+                    bgCirclesVis: true,
+                    bgType: 'bg1',
+                    bgEffect: 'none',
+                    bgVisible: true
                 },
                 scores: defaultScores,
                 player_cards: defaultCards,
@@ -744,6 +793,17 @@
                 }
                 if (data.wheel_state.pointerVis) {
                     globalPointerVis = Object.assign(globalPointerVis, data.wheel_state.pointerVis);
+                }
+                if (data.wheel_state.bgType !== undefined) {
+                    globalBgType = data.wheel_state.bgType || 'bg1';
+                    globalBgEffect = data.wheel_state.bgEffect || 'none';
+                    globalBgVisible = (data.wheel_state.bgVisible !== false);
+                    updateBgStatusUI();
+                } else if (data.wheel_state.bgCirclesVis !== undefined) {
+                    globalBgVisible = (data.wheel_state.bgCirclesVis !== false);
+                    globalBgType = 'bg1';
+                    globalBgEffect = 'none';
+                    updateBgStatusUI();
                 }
                 if (data.wheel_state.mysteryValues && Array.isArray(data.wheel_state.mysteryValues)) {
                     mysteryValues = data.wheel_state.mysteryValues;
@@ -867,6 +927,82 @@
         }
 
         let currentRotation = 270;
+
+        function updateBgStatusUI() {
+            const statusEl = document.getElementById('bgCirclesStatus');
+            if (!statusEl) return;
+            if (!globalBgVisible) {
+                statusEl.innerText = '(Đang ẩn)';
+            } else if (globalBgEffect === 'effect1') {
+                statusEl.innerText = '(Hiệu ứng 1)';
+            } else if (globalBgEffect === 'effect2') {
+                statusEl.innerText = '(Hiệu ứng 2)';
+            } else if (globalBgType === 'bg2') {
+                statusEl.innerText = '(Background 2)';
+            } else if (globalBgType === 'bg3') {
+                statusEl.innerText = '(Background 3)';
+            } else {
+                statusEl.innerText = '(Background 1)';
+            }
+            // Màu chữ Background x luôn luôn là chữ đen vì nền trắng
+            statusEl.style.color = '#000000';
+        }
+
+        async function setBgMode(type, effect) {
+            if (!requireRoom()) return;
+            globalBgType = type || 'bg1';
+            globalBgEffect = effect || 'none';
+            globalBgVisible = true;
+            globalBgCirclesVis = true;
+            updateBgStatusUI();
+
+            sendEvent('set_bg_mode', {
+                bgType: globalBgType,
+                bgEffect: globalBgEffect,
+                bgVisible: globalBgVisible
+            });
+
+            await updateWheelStateFields({
+                bgType: globalBgType,
+                bgEffect: globalBgEffect,
+                bgVisible: globalBgVisible,
+                bgCirclesVis: true
+            });
+        }
+
+        async function toggleBgVisible(show) {
+            if (!requireRoom()) return;
+            globalBgVisible = (show !== false);
+            globalBgCirclesVis = globalBgVisible;
+            updateBgStatusUI();
+
+            sendEvent('set_bg_mode', {
+                bgType: globalBgType,
+                bgEffect: globalBgEffect,
+                bgVisible: globalBgVisible
+            });
+
+            await updateWheelStateFields({
+                bgType: globalBgType,
+                bgEffect: globalBgEffect,
+                bgVisible: globalBgVisible,
+                bgCirclesVis: globalBgVisible
+            });
+        }
+
+        async function stopBgEffect() {
+            if (!requireRoom()) return;
+            // Tùy vào hiệu ứng đang chạy, nó sẽ chuyển về trạng thái mặc định của Background 2 nếu là hiệu ứng 1, Background 3 nếu là hiệu ứng 2
+            if (globalBgEffect === 'effect1' || globalBgType === 'bg2') {
+                await setBgMode('bg2', 'none');
+            } else {
+                await setBgMode('bg3', 'none');
+            }
+        }
+
+        async function toggleBgCircles(show) {
+            await toggleBgVisible(show);
+        }
 
         function toggleWheel(type, isShow) {
             if (!requireRoom()) return;
@@ -1192,19 +1328,33 @@
         function modifyScore(color, type, operation) {
             if (!requireRoom()) return;
             const inputEl = document.getElementById(`score-input-${color}`);
+            const freqEl = document.getElementById(`freq-input-${color}`);
             // Loại bỏ tất cả dấu chấm trước khi tiến hành parse thành số nguyên xử lý tính toán
-            let cleanValue = inputEl.value.replace(/\./g, "");
+            let cleanValue = inputEl ? inputEl.value.replace(/\./g, "") : "0";
             let val = parseInt(cleanValue);
             if (isNaN(val)) val = 0;
 
+            let freq = freqEl ? parseInt(freqEl.value) : 1;
+            if (isNaN(freq) || freq < 1) freq = 1;
+
+            let finalDelta = val * freq;
+
             let key = color + type.charAt(0).toUpperCase() + type.slice(1);
             if (operation === 'add') {
-                globalScores[key] += val;
+                globalScores[key] += finalDelta;
             } else if (operation === 'sub') {
-                globalScores[key] -= val;
+                globalScores[key] -= finalDelta;
             }
             syncScoresToWheel();
-            inputEl.value = '';
+            // Text nhập điểm không tự động xóa khi bấm nút Tổng +, Vòng +, Vòng -
+        }
+
+        function addRoundToTotal(color) {
+            if (!requireRoom()) return;
+            const roundKey = color + 'Round';
+            const totalKey = color + 'Total';
+            globalScores[totalKey] += globalScores[roundKey];
+            syncScoresToWheel();
         }
 
         function multiplyRoundScore(color, factor) {

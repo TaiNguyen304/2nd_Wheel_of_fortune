@@ -513,6 +513,7 @@
                         <button onclick="modifyScore('red', 'round', 'add')" style="background: yellow; color: black;">Vòng +</button>
                         <button onclick="modifyScore('red', 'round', 'sub')" style="background: red; color: white;">Vòng -</button>
                         <button onclick="addRoundToTotal('red')" style="background: #008000; color: white; font-weight: bold;">+Vòng vào tổng</button>
+                        <button onclick="clearScoreText('red')" style="background: #E5E7EB; color: #000000; font-weight: bold;">Xóa text</button>
                     </div>
                     <div class="flex-row" style="margin-bottom: 4px; flex-wrap: wrap; gap: 4px;">
                         <button onclick="multiplyRoundScore('red', 1.5)" style="background: #800080; color: white; font-weight: bold;">x1.5</button>
@@ -538,6 +539,7 @@
                         <button onclick="modifyScore('yellow', 'round', 'add')" style="background: yellow; color: black;">Vòng +</button>
                         <button onclick="modifyScore('yellow', 'round', 'sub')" style="background: red; color: white;">Vòng -</button>
                         <button onclick="addRoundToTotal('yellow')" style="background: #008000; color: white; font-weight: bold;">+Vòng vào tổng</button>
+                        <button onclick="clearScoreText('yellow')" style="background: #E5E7EB; color: #000000; font-weight: bold;">Xóa text</button>
                     </div>
                     <div class="flex-row" style="margin-bottom: 4px; flex-wrap: wrap; gap: 4px;">
                         <button onclick="multiplyRoundScore('yellow', 1.5)" style="background: #800080; color: white; font-weight: bold;">x1.5</button>
@@ -563,6 +565,7 @@
                         <button onclick="modifyScore('blue', 'round', 'add')" style="background: yellow; color: black;">Vòng +</button>
                         <button onclick="modifyScore('blue', 'round', 'sub')" style="background: red; color: white;">Vòng -</button>
                         <button onclick="addRoundToTotal('blue')" style="background: #008000; color: white; font-weight: bold;">+Vòng vào tổng</button>
+                        <button onclick="clearScoreText('blue')" style="background: #E5E7EB; color: #000000; font-weight: bold;">Xóa text</button>
                     </div>
                     <div class="flex-row" style="margin-bottom: 4px; flex-wrap: wrap; gap: 4px;">
                         <button onclick="multiplyRoundScore('blue', 1.5)" style="background: #800080; color: white; font-weight: bold;">x1.5</button>
@@ -1355,6 +1358,13 @@
             const totalKey = color + 'Total';
             globalScores[totalKey] += globalScores[roundKey];
             syncScoresToWheel();
+        }
+
+        function clearScoreText(color) {
+            const inputEl = document.getElementById(`score-input-${color}`);
+            const freqEl = document.getElementById(`freq-input-${color}`);
+            if (inputEl) inputEl.value = '';
+            if (freqEl) freqEl.value = '1';
         }
 
         function multiplyRoundScore(color, factor) {

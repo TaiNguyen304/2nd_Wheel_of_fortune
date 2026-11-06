@@ -191,19 +191,36 @@
         }
 
         .placed-item.is-card img {
-            top: 25px;
+            top: 15px;
             width: 8.2%;
-            max-height: 44px;
+            max-height: 40px;
             object-fit: contain;
             clip-path: none;
         }
 
         .placed-item.is-wedge img {
-            top: 17px;
-            width: 12.1%;
-            height: 28.7%;
+            top: 6.2px;
+            width: 12.77%;
+            height: auto;
             clip-path: none;
+            object-fit: contain;
+        }
+
+        /* Ô 100k: độ rộng về 12.77%, top và chiều cao bằng với ô Mất điểm */
+        .placed-item.is-wedge img[src*="100000"],
+        [id*="100.000"] img {
+            width: 12.77%;
+            top: 6.2px;
+            height: 29.85%;
             object-fit: fill;
+        }
+
+        /* Ô 2000 và Ô 2500 căn chỉnh top */
+        .placed-item.is-wedge img[src*="2000"],
+        .placed-item.is-wedge img[src*="2500"],
+        [id*="2.000"] img,
+        [id*="2.500"] img {
+            top: 4.7px;
         }
 
         .dot-wrapper {

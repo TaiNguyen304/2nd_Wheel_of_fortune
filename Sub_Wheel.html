@@ -30,6 +30,7 @@
             justify-content: center;
             align-items: center;
             position: relative;
+            z-index: 1;
             width: 600px;
             height: 600px;
             /* Cố định tâm xoay tại chính giữa tâm bánh xe */
@@ -56,6 +57,21 @@
         .wheel-area.zoomed.tilt-blue {
             transform: scale(2) rotate(-30deg) !important;
             margin-top: 750px;
+        }
+
+        .page-bg-layer {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: max(100vw, calc(100vh * 16 / 9));
+            height: max(56.25vw, 100vh);
+            background-size: 100% 100%;
+            background-repeat: no-repeat;
+            background-position: center center;
+            pointer-events: none;
+            z-index: -1;
+            display: none;
         }
 
         .background-circles {
@@ -284,6 +300,7 @@
 <body>
 
     <div class="wheel-area" id="wheelArea">
+        <div id="pageBgLayer" class="page-bg-layer"></div>
         <div id="backgroundCircles" class="background-circles">
             <div id="bgLayer1" style="width: 100%; height: 100%;">
                 <img src="./background_circles.svg" alt="Background Rings" style="width: 100%; height: 100%; display: block;" />
@@ -523,6 +540,7 @@
         let currentBgType = 'bg1';
         let currentBgEffect = 'none';
         let currentBgVisible = true;
+        let currentPageBg = 'none';
         let bgCirclesVis = true;
         let bgEffectTimer = null;
 
@@ -619,6 +637,31 @@
 
         function executeToggleBgCircles(visible) {
             applyBgMode(undefined, undefined, visible);
+        }
+
+        function applyPageBg(pageBg) {
+            currentPageBg = pageBg || 'none';
+            const bgLayer = document.getElementById('pageBgLayer');
+            const bgMap = {
+                nen1: "url('./Nền 1.jpg')",
+                nen2: "url('./Nền 2.jpg')",
+                nen3: "url('./Nền 3.jpg')"
+            };
+            if (bgMap[currentPageBg]) {
+                document.body.style.backgroundColor = '#0a0605';
+                document.body.style.backgroundImage = 'none';
+                if (bgLayer) {
+                    bgLayer.style.backgroundImage = bgMap[currentPageBg];
+                    bgLayer.style.display = 'block';
+                }
+            } else {
+                document.body.style.backgroundImage = 'none';
+                document.body.style.backgroundColor = 'purple';
+                if (bgLayer) {
+                    bgLayer.style.backgroundImage = 'none';
+                    bgLayer.style.display = 'none';
+                }
+            }
         }
 
         function normalizeAngle(deg) {
@@ -742,6 +785,7 @@
                 bgEffect: currentBgEffect,
                 bgVisible: currentBgVisible,
                 bgCirclesVis: currentBgVisible,
+                pageBg: currentPageBg,
                 itemsState: itemsState
             };
             return state;
@@ -790,6 +834,9 @@
                 const bEff = state.bgEffect || 'none';
                 const bVis = state.bgVisible !== undefined ? state.bgVisible : (state.bgCirclesVis !== false);
                 applyBgMode(bType, bEff, bVis);
+            }
+            if (state.pageBg !== undefined) {
+                applyPageBg(state.pageBg);
             }
 
             // Ẩn tất cả các ô thẻ trên Nón Phụ và Nón Đặc Biệt, chỉ hiện trên Nón Thường
@@ -1210,6 +1257,10 @@
             }).on('broadcast', { event: 'toggle_bg_circles' }, function (payload) {
                 if (payload && payload.payload) {
                     applyBgMode(undefined, undefined, payload.payload.visible);
+                }
+            }).on('broadcast', { event: 'set_page_bg' }, function (payload) {
+                if (payload && payload.payload) {
+                    applyPageBg(payload.payload.pageBg);
                 }
             }).on('broadcast', { event: 'spin_wheel' }, function (payload) {
                 executeSpin(payload.payload.duration, payload.payload.randomOffset, payload.payload.startTime, payload.payload.startRot, payload.payload.minRotations);
